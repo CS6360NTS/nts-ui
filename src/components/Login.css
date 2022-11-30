@@ -1,0 +1,36 @@
+.container-login {
+    width: 1536px;
+    height: 510px;
+    background-image: url('./nft.webp');
+}
+
+.login-form {
+    width: 300px;
+    height: 400px;
+    box-shadow: rgb(0 0 0 / 16%) 1px 1px 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    align-items: center;
+    background-color: beige;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.mini-container {
+    padding-top: 55px;
+    padding-left: 1000px;
+
+}
+
+.form-heading {
+  margin-bottom: 1em;
+  font-size: 24px;
+  color: rgb(34, 34, 34);
+  font-weight: 800;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(34, 34, 34);
+  }

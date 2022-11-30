@@ -1,0 +1,22 @@
+.img-img{
+width: 100px;
+height: 100px;  
+padding-left: 700px;
+padding-right: 700px;
+}
+
+.img-fluid{
+    width: 100px;
+    height: 100px;  
+    background-color: #E1DFBA;
+}
+
+.carousel-cls{
+    width: 1500px;
+}
+
+.slick-slide img {
+    margin: auto;
+    width: 50%;
+    height: 50%;
+    }

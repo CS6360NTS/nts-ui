@@ -1,0 +1,13 @@
+.container{
+    align-items: center;
+}
+
+
+.container ul {
+    list-style: none;
+    text-align: center;
+ }
+ 
+ .conatiner ul li {
+    display: inline-block;
+ }
