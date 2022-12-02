@@ -2,7 +2,8 @@ import logo from "./logo.svg";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import {
   About,
   ContactUs,
@@ -15,8 +16,8 @@ import {
   UserHome,
   CreateNFT,
   TradeNFT,
-  TransactionList,
 } from "./components";
+import TransactionList from "./components/TransactionList/TransactionList";
 function App() {
   const [login, setLogin] = useState(false);
   return (

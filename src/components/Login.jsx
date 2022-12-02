@@ -5,26 +5,28 @@ function Login() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = () => {
     const request = { userName: userName, password: password };
-    axios
-      .post("/nts/addUser", {
-        userInfo: {
-          firstName: userName,
-          password: password,
-        },
-      })
-      .then((response) =>{console.log(response.status)
-        if(response.status==200)
-        {
-        window.location.href = "http://localhost:3000/sidebar";
-        }
-      })
-      .catch((error) => console.log(error));
+       fetch("/nts/user?clientId=1").then((response) => {
+      console.log(response);
+    });
+    // axios
+    //   .get("/nts/user?clientId=1")
+    //   .then((response) => {
+    //     console.log(response.status);
+    //     console.log(response,"res");
+    //     // if (response.status == 200) {
+    //     //   window.location.href = "http://localhost:3000/sidebar";
+    //     // }
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     window.alert("some exception");
+    //   });
     // var { name, pwd } = document.forms[0];
     // console.log(document.forms[0]);
     // console.log(event.target);
-    // window.location.href = "http://localhost:3000/sidebar";
+    window.location.href = "http://localhost:3000/sidebar";
   };
 
   const handleUsername = (event) => {
@@ -34,11 +36,11 @@ function Login() {
   const handlePw = (event) => {
     setPassword(event.target.value);
   };
-  // useEffect(() => {
-  //   fetch("/nts/users").then((response) => {
-  //     console.log(response);
-  //   });
-  // });
+  useEffect(() => {
+    fetch("/nts/user?clientId=1").then((response) => {
+      console.log(response);
+    });
+  });
 
   return (
     <div className="login">
