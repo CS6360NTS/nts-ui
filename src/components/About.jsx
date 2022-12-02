@@ -4,7 +4,6 @@ import nft21 from './nft21.png';
 import trend from  './trend.webp';
 import { Carousel } from 'react-bootstrap';
 
-
 function About() {
     return (
       <div className="about">
