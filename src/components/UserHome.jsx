@@ -284,6 +284,10 @@ const UserHome = () => {
             field="ethPrice"
             header="Ethereum Price"
           ></Column>
+            <Column
+            field="currentUSDValue"
+            header="USD Price"
+          ></Column>
         </DataTable>
         </div>
         <div className="col-2">
