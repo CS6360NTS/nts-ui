@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
+  useParams
+} from "react-router-dom";
+import {
   CDBSidebar,
   CDBSidebarContent,
   CDBSidebarFooter,
@@ -28,16 +31,18 @@ const UserHome = () => {
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
+  let { clientId } = useParams();
   const fetchTransactionHistory = async () => {
+    // let { clientId } = useParams();
     await axios
-      .get("/nts/get/nft?clientId=1004")
+      .get("/nts/get/nft?clientId="+`${clientId}`)
       .then((response) => {
         console.log(response)
         setTransactions(response.data['nfts']);
       });
   };
   useEffect(() => {
-    fetchTransactionHistory();
+    fetchTransactionHistory(clientId);
     initFilters1();
   }, [id]);
 
@@ -190,6 +195,7 @@ const UserHome = () => {
   const header1 = renderHeader1();
 
   return (
+   
     <div
       style={{ display: "flex", height: "100vh", overflow: "scroll initial" }}
     >
@@ -206,18 +212,18 @@ const UserHome = () => {
 
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
-            <NavLink exact to="/userhome" activeClassName="activeClicked">
+            <NavLink exact to={"/userhome/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="home">Home</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/createnft" activeClassName="activeClicked">
+            <NavLink exact to={"/createnft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="plus">Create NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/tradenft" activeClassName="activeClicked">
+            <NavLink exact to={"/tradenft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
             </NavLink>
             <NavLink
               exact
-              to="/transactionlist"
+              to={"/transactionlist/"+clientId}
               activeClassName="activeClicked"
             >
               <CDBSidebarMenuItem icon="list">
@@ -242,7 +248,7 @@ const UserHome = () => {
       <h1>Welcome, Navaneeth Kumar Buddi !</h1>
       <br/>
       <h1 class="display-7">Your NFT List</h1>
-      <div class="row">
+      <div class="row" style={{paddingBottom:100}}>
         <div className="col-10">
         <DataTable
           value={transactions}
