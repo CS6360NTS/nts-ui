@@ -35,6 +35,7 @@ function App() {
         <Route path="/createnft/:clientId" element={<CreateNFT />} />
         <Route path="/tradenft/:clientId" element={<TradeNFT />} />
         <Route path="/transactionlist/:clientId" element={<TransactionList />} />
+        <Route path="/deposit/:clientId" element={<Deposit/>}/>
       </Routes>
       <Footer />
     </Router>

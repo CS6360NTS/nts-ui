@@ -221,7 +221,7 @@ const UserHome = () => {
             <NavLink exact to={"/tradenft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/deposit" activeClassName="activeClicked">
+            <NavLink exact to={"/deposit/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
             </NavLink>
             <NavLink
