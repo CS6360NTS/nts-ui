@@ -306,26 +306,20 @@ const TransactionList = () => {
 
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
-            <NavLink exact to= {"/userhome/"+clientId}  activeClassName="activeClicked">
+            <NavLink exact to={"/userhome/" + clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="home">Home</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to={"/createnft/"+clientId} activeClassName="activeClicked">
+            <NavLink exact to={"/createnft/" + clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="plus">Create NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to={"/tradenft/"+clientId} activeClassName="activeClicked">
+            <NavLink exact to={"/tradenft/" + clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to={"/deposit/"+clientId} activeClassName="activeClicked">
+            <NavLink exact to={"/deposit/" + clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink
-              exact
-              to={"/transactionlist/"+clientId}
-              activeClassName="activeClicked"
-            >
-              <CDBSidebarMenuItem icon="list">
-                Transaction List
-              </CDBSidebarMenuItem>
+            <NavLink exact to={"/transactionlist/" + clientId} activeClassName="activeClicked">
+              <CDBSidebarMenuItem icon="list">Transaction List</CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to="/login" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="power-off">Sign Out</CDBSidebarMenuItem>

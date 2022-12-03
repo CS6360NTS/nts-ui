@@ -65,6 +65,8 @@ const TradeNFT = () => {
   const [rows1, setRows1] = useState(5);
   const [id, setId] = useState("");
   const [selectedRows, setSelectedRows] = useState(null);
+  const [tokenIds, setTokenIds] = useState([])
+  const [cartValue, setCartValue] = useState(0);
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
@@ -83,10 +85,19 @@ const TradeNFT = () => {
     initFilters1();
   }, [id]);
 
-  const buynft = () => {
-    console.log(this.selectedRows);
+  const buynft = (event) => {
+    console.log(selectedRows);
+    let y = []
+    let tc = 0;
+    selectedRows.map((x) => {
+      y.push(x['tokenId']);
+      tc = tc + (x['ethPrice']);
+    })
+    setTokenIds(y);
+    console.log(tc);
+    setCartValue(tc);
+    console.log(`${cartValue}`);
   }
-
 
   const renderHeader1 = () => {
     return (
@@ -294,6 +305,7 @@ const TradeNFT = () => {
         filters={filters1}
         globalFilterFields={[
           "tokenId",
+          "clientId",
           "name",
           "description",
           "ethPrice",
@@ -311,18 +323,27 @@ const TradeNFT = () => {
         <Column
           field="tokenId"
           header="Token Id"
+          sortable="true"
+        ></Column>
+        <Column
+          field="clientId"
+          header="Client Id"
+          sortable="true"
         ></Column>
         <Column
           field="name"
           header="Name"
+          sortable="true"
         ></Column>
         <Column
           field="description"
           header="Description"
+          sortable="true"
         ></Column>
         <Column
           field="ethPrice"
           header="Ethereum Price"
+          sortable="true"
         ></Column>
       </DataTable>
     </div>
