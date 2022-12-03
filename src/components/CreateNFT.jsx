@@ -30,6 +30,9 @@ const CreateNFT = () => {
             <NavLink exact to="/tradenft" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
             </NavLink>
+            <NavLink exact to="/deposit" activeClassName="activeClicked">
+              <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
+            </NavLink>
             <NavLink exact to="/transactionlist" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="list">Transaction List</CDBSidebarMenuItem>
             </NavLink>
@@ -48,23 +51,25 @@ const CreateNFT = () => {
           </div>
         </CDBSidebarFooter>
       </CDBSidebar>
-      <form className="login-form">
-              <div className="form-container">
-                <h2 className="form-heading">Create NFT</h2><br />
-                <div className="form-body">
-                  <label>Name </label><br />
-                  <input type="text" placeholder="Enter name" required />
-                  <br />
-                  <label>No of copies </label><br />
-                  <input type="number" min={1} max={1000} step={1} required />
-                  <br /><br />
-                  <label>Price </label><br />
-                  <input type="text"  required />
-                  <br /><br />
-                  <button className="btn btn-primary" type="submit">Create</button><br /><br />
-                </div>
-              </div>
-            </form>
+      <div class="mini-container" style={{paddingTop: '50px',paddingLeft: '300px',paddingRight: '200px',paddingBottom: '50px'}}>
+        <form className="login-form">
+          <div className="form-container">
+            <h2 className="form-heading">Create NFT</h2><br />
+            <div className="form-body">
+              <label>Name </label><br />
+              <input type="text" placeholder="Enter name" required />
+              <br /><br/>
+              <label>No of copies </label><br />
+              <input type="number" min={1} max={1000} step={1} required />
+              <br /><br />
+              <label>Price </label><br />
+              <input type="text" required />
+              <br /><br />
+              <button class="btn btn-primary" type="submit">Create</button><br /><br />
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
