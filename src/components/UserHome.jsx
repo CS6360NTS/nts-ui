@@ -31,6 +31,9 @@ const UserHome = () => {
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
+  const [userName, setUserName] = useState("");
+  const [ethValue, setEthValue] = useState("");
+  const [usdValue, setUSDValue] = useState("");
   let { clientId } = useParams();
   const fetchTransactionHistory = async () => {
     // let { clientId } = useParams();
@@ -41,8 +44,20 @@ const UserHome = () => {
         setTransactions(response.data['nfts']);
       });
   };
+  const fetchUserDetails = async () => {
+    // let { clientId } = useParams();
+    await axios
+      .get("/nts/user?clientId="+`${clientId}`)
+      .then((response) => {
+        console.log();
+        setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
+        setEthValue(response.data['tradeInfo']['ethBalance'].toFixed(2));
+        setUSDValue(response.data['tradeInfo']['balance'].toFixed(2));
+      });
+  };
   useEffect(() => {
-    fetchTransactionHistory(clientId);
+    fetchUserDetails();
+    fetchTransactionHistory();
     initFilters1();
   }, [id]);
 
@@ -206,7 +221,7 @@ const UserHome = () => {
             className="text-decoration-none"
             style={{ color: "inherit" }}
           >
-            Username
+           {userName}
           </a>
         </CDBSidebarHeader>
 
@@ -223,6 +238,9 @@ const UserHome = () => {
             </NavLink>
             <NavLink exact to={"/deposit/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
+            </NavLink>
+            <NavLink exact to={"/withdraw/"+clientId} activeClassName="activeClicked">
+                <CDBSidebarMenuItem icon="hand-holding-usd">Withdraw Funds</CDBSidebarMenuItem>
             </NavLink>
             <NavLink
               exact
@@ -248,7 +266,7 @@ const UserHome = () => {
         </CDBSidebarFooter>
       </CDBSidebar>
       <div>
-      <h1>Welcome, Navaneeth Kumar Buddi !</h1>
+      <h1>Welcome,  {userName} !</h1>
       <br/>
       <h1 class="display-7">Your NFT List</h1>
       <div class="row" style={{paddingBottom:100}}>
@@ -296,10 +314,10 @@ const UserHome = () => {
         <div className="col-2">
         <h4 class="display-7"><b>Balance</b></h4>
          <div className="row">
-          <p><b>USD:</b> 500$</p>
+          <p><b>USD:</b> {usdValue}$</p>
          </div>
          <div className="row">
-          <p><b>ETH:</b> 321 Ξ</p>
+          <p><b>ETH:</b> {ethValue} Ξ</p>
          </div>
         </div>
       </div>
