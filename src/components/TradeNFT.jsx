@@ -68,7 +68,19 @@ const TradeNFT = () => {
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
-
+  const [userName, setUserName] = useState("");
+    const fetchUserDetails = async () => {
+      // let { clientId } = useParams();
+      await axios
+        .get("/nts/user?clientId="+`${clientId}`)
+        .then((response) => {
+          console.log();
+          setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
+        });
+    };
+    useEffect(() => {
+        fetchUserDetails();
+      });
   var test;
   const fetchTransactionHistory = async () => {
     await axios
@@ -246,7 +258,7 @@ const TradeNFT = () => {
             className="text-decoration-none"
             style={{ color: "inherit" }}
           >
-            Username
+            {userName}
           </a>
         </CDBSidebarHeader>
 
@@ -263,6 +275,9 @@ const TradeNFT = () => {
             </NavLink>
             <NavLink exact to={"/deposit/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
+            </NavLink>
+            <NavLink exact to={"/withdraw/"+clientId} activeClassName="activeClicked">
+                <CDBSidebarMenuItem icon="hand-holding-usd">Withdraw Funds</CDBSidebarMenuItem>
             </NavLink>
             <NavLink
               exact

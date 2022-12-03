@@ -67,6 +67,7 @@ const TransactionList = () => {
             <NavLink exact to="/deposit" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
             </NavLink>
+            
             <NavLink exact to="/transactionlist" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="list">Transaction List</CDBSidebarMenuItem>
             </NavLink>
