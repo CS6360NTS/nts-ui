@@ -7,9 +7,13 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from 'cdbreact';
+import {
+  useParams
+} from "react-router-dom";
 import { NavLink } from 'react-router-dom';
 
 const CreateNFT = () => {
+  let { clientId } = useParams();
   return (
     <div style={{ display: 'flex', height: '80vh', overflow: 'scroll initial' }}>
       <CDBSidebar textColor="#fff" backgroundColor="#333">
@@ -21,16 +25,16 @@ const CreateNFT = () => {
 
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
-            <NavLink exact to="/userhome" activeClassName="activeClicked">
+            <NavLink exact to={"/userhome/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="home">Home</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/createnft" activeClassName="activeClicked">
+            <NavLink exact to={"/createnft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="plus">Create NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/tradenft" activeClassName="activeClicked">
+            <NavLink exact to={"/tradenft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/transactionlist" activeClassName="activeClicked">
+            <NavLink exact to={"/transactionlist/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="list">Transaction List</CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to="/login" activeClassName="activeClicked">

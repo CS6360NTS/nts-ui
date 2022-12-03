@@ -7,6 +7,9 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from "cdbreact";
+import {
+  useParams
+} from "react-router-dom";
 import { Ripple } from "primereact/ripple";
 import { Dropdown } from "primereact/dropdown";
 import { classNames } from "primereact/utils";
@@ -56,6 +59,7 @@ const tradeStyle = {
 };
 
 const TradeNFT = () => {
+  let { clientId } = useParams();
   const [transactions, setTransactions] = useState([]);
   const [moneyInfo, setMoneyInfo] = useState([]);
   const [tradeInfo, setTradeInfo] = useState([]);
@@ -76,7 +80,7 @@ const TradeNFT = () => {
   const handleMoneyClose = () => setMoneyOpen(false);
   const fetchTransactionHistory = async () => {
     await axios
-      .get("/nts/get/trade/nft?clientId=1004")
+      .get("/nts/get/trade/nft?clientId="+`${clientId}`)
       .then((response) => {
         console.log(response)
         setTransactions(response.data['nfts']);
@@ -295,18 +299,18 @@ const TradeNFT = () => {
 
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
-            <NavLink exact to="/userhome" activeClassName="activeClicked">
+            <NavLink exact to={"/userhome/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="home">Home</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/createnft" activeClassName="activeClicked">
+            <NavLink exact to={"/createnft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="plus">Create NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/tradenft" activeClassName="activeClicked">
+            <NavLink exact to={"/tradenft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
             </NavLink>
             <NavLink
               exact
-              to="/transactionlist"
+              to={"/transactionlist/"+clientId}
               activeClassName="activeClicked"
             >
               <CDBSidebarMenuItem icon="list">
