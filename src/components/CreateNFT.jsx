@@ -1,4 +1,4 @@
-import {React,useState} from 'react';
+import {React,useState,useEffect} from 'react';
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -20,6 +20,19 @@ const CreateNFT = (name,eth,noOfCopies) => {
   const handleName = (event) => {
     setName(event.target.value);
   };
+  const [userName, setUserName] = useState("");
+    const fetchUserDetails = async () => {
+      // let { clientId } = useParams();
+      await axios
+        .get("/nts/user?clientId="+`${clientId}`)
+        .then((response) => {
+          console.log();
+          setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
+        });
+    };
+    useEffect(() => {
+        fetchUserDetails();
+      });
   const handleEth = (event) => {
     setEth(event.target.value);
   };
@@ -43,7 +56,7 @@ const CreateNFT = (name,eth,noOfCopies) => {
       <CDBSidebar textColor="#fff" backgroundColor="#333">
         <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
           <a href="/" className="text-decoration-none" style={{ color: 'inherit' }}>
-            Username
+           {userName}
           </a>
         </CDBSidebarHeader>
 
@@ -60,6 +73,9 @@ const CreateNFT = (name,eth,noOfCopies) => {
             </NavLink>
             <NavLink exact to={"/deposit/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
+            </NavLink>
+            <NavLink exact to={"/deposit/"+clientId} activeClassName="activeClicked">
+                <CDBSidebarMenuItem icon="hand-holding-usd">Withdraw Funds</CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to={"/transactionlist/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="list">Transaction List</CDBSidebarMenuItem>

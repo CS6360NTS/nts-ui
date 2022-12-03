@@ -14,10 +14,16 @@ import {
 import { NavLink } from 'react-router-dom';
 import './common.css';
 
-const Deposit = () => {
+const Debit = () => {
     let { clientId } = useParams();
-    const [creditEthAmount, setCreditAmountEth] = useState("");
-    const [creditUSDAmount, setCreditAmountUSD] = useState("");
+    const [debitEthAmount, setCreditAmountEth] = useState("");
+    const [debitUSDAmount, setCreditAmountUSD] = useState("");
+    const handleDebitAmountEth = (event) => {
+        setCreditAmountEth(event.target.value);
+    };
+    const handleDebitAmountUSD= (event) => {
+        setCreditAmountUSD(event.target.value);
+    };
     const [userName, setUserName] = useState("");
     const fetchUserDetails = async () => {
       // let { clientId } = useParams();
@@ -31,16 +37,11 @@ const Deposit = () => {
     useEffect(() => {
         fetchUserDetails();
       });
-    const handleCreditAmountEth = (event) => {
-        setCreditAmountEth(event.target.value);
-    };
-    const handleCreditAmountUSD= (event) => {
-        setCreditAmountUSD(event.target.value);
-    };
-    const creditUSDToWallet = (e) => {
+    
+    const debitFromUSDToWallet = (e) => {
         e.preventDefault();
          axios
-          .get("/nts/addMoneyFromBofa?clientId="+`${clientId}`+"&amount="+`${creditUSDAmount}`)
+          .get("/nts/debitMoneyFromWallet?clientId="+`${clientId}`+"&amount="+`${debitUSDAmount}`)
           .then((response) => {
             //console.log();
             if(response.data['success'])
@@ -49,10 +50,10 @@ const Deposit = () => {
             }
           });
       };
-      const creditEthToWallet = (e) => {
+      const debitFromEthToWallet = (e) => {
         e.preventDefault();
          axios
-          .get("/nts/addMoneyFromBofaToEthWallet?clientId="+`${clientId}`+"&amount="+`${creditEthAmount}`)
+          .get("/nts/debitMoneyForEthmWallet?clientId="+`${clientId}`+"&amount="+`${debitEthAmount}`)
           .then((response) => {
             //console.log();
             if(response.data['success'])
@@ -108,13 +109,13 @@ const Deposit = () => {
               <div class="mini-container" style={{ paddingTop: '100px', paddingLeft: '75px', paddingRight: '100px', paddingBottom: '50px' }}>
                   <form className="deposit-form">
                       <div className="form-container">
-                          <h2 className="form-heading">To Fiat Wallet</h2><br />
+                          <h2 className="form-heading">From Fiat Wallet</h2><br />
                           <div className="form-body">
                               <label>Amount </label><br />
-                              <input type="text" placeholder="Enter amount in $" onChange={handleCreditAmountUSD} required />
+                              <input type="text" placeholder="Enter amount in $" onChange={handleDebitAmountUSD} required />
                               <br />
                               <br/>
-                              <button class="btn btn-success" type="submit" onClick={creditUSDToWallet}>Add to wallet</button><br /><br />
+                              <button class="btn btn-success" type="submit" onClick={debitFromUSDToWallet}>Add to wallet</button><br /><br />
                           </div>
                       </div>
                   </form>
@@ -122,12 +123,12 @@ const Deposit = () => {
               <div class="mini-container" style={{ paddingTop: '100px', paddingLeft: '75px', paddingRight: '100px', paddingBottom: '50px' }}>
                   <form className="deposit-form">
                       <div className="form-container">
-                          <h2 className="form-heading">To Ethereum Wallet</h2><br />
+                          <h2 className="form-heading">From Ethereum Wallet</h2><br />
                           <div className="form-body">
                               <label>Amount </label><br />
-                              <input type="text" placeholder="Enter amount in $" onChange={handleCreditAmountEth} required />
+                              <input type="text" placeholder="Enter amount in Ξ" onChange={handleDebitAmountEth} required />
                               <br /><br />
-                              <button class="btn btn-success" type="submit" onClick={creditEthToWallet}>Add to wallet</button><br /><br />
+                              <button class="btn btn-success" type="submit" onClick={debitFromEthToWallet}>Add to wallet</button><br /><br />
                           </div>
                       </div>
                   </form>
@@ -137,4 +138,4 @@ const Deposit = () => {
   );
 };
 
-export default Deposit;
+export default Debit;
