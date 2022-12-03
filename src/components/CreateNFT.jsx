@@ -1,4 +1,4 @@
-import React from 'react';
+import {React,useState} from 'react';
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -7,9 +7,37 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from 'cdbreact';
+import {
+  useParams
+} from "react-router-dom";
+import axios from "axios";
 import { NavLink } from 'react-router-dom';
 
-const CreateNFT = () => {
+const CreateNFT = (name,eth,noOfCopies) => {
+  const [nameForNft, setName] = useState("");
+  const [ethForNft, setEth] = useState("");
+  const [noOfCopiesForNft, setCopies] = useState("");
+  const handleName = (event) => {
+    setName(event.target.value);
+  };
+  const handleEth = (event) => {
+    setEth(event.target.value);
+  };
+  const handleCopies = (event) => {
+    setCopies(event.target.value);
+  };
+  const createNft = (e) => {
+    e.preventDefault();
+     axios
+      .get("/nts/create/nfts?clientId="+`${clientId}`+"&name="+`${nameForNft}`+"&ethPrice="+`${ethForNft}`+"&noOfCopies="+`${noOfCopiesForNft}`)
+      .then((response) => {
+        if(response?.data?.serverResponse?.success)
+        {
+          window.location.href = "http://localhost:3000/userhome/"+`${clientId}`;
+        }
+      });
+  };
+  let { clientId } = useParams();
   return (
     <div style={{ display: 'flex', height: '80vh', overflow: 'scroll initial' }}>
       <CDBSidebar textColor="#fff" backgroundColor="#333">
@@ -21,19 +49,19 @@ const CreateNFT = () => {
 
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
-            <NavLink exact to="/userhome" activeClassName="activeClicked">
+            <NavLink exact to={"/userhome/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="home">Home</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/createnft" activeClassName="activeClicked">
+            <NavLink exact to={"/createnft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="plus">Create NFT</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/tradenft" activeClassName="activeClicked">
+            <NavLink exact to={"/tradenft/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to="/deposit" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to="/transactionlist" activeClassName="activeClicked">
+            <NavLink exact to={"/transactionlist/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="list">Transaction List</CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to="/login" activeClassName="activeClicked">
@@ -51,25 +79,23 @@ const CreateNFT = () => {
           </div>
         </CDBSidebarFooter>
       </CDBSidebar>
-      <div class="mini-container" style={{paddingTop: '50px',paddingLeft: '300px',paddingRight: '200px',paddingBottom: '50px'}}>
-        <form className="login-form">
-          <div className="form-container">
-            <h2 className="form-heading">Create NFT</h2><br />
-            <div className="form-body">
-              <label>Name </label><br />
-              <input type="text" placeholder="Enter name" required />
-              <br /><br/>
-              <label>No of copies </label><br />
-              <input type="number" min={1} max={1000} step={1} required />
-              <br /><br />
-              <label>Price </label><br />
-              <input type="text" required />
-              <br /><br />
-              <button class="btn btn-primary" type="submit">Create</button><br /><br />
-            </div>
-          </div>
-        </form>
-      </div>
+      <form className="login-form">
+              <div className="form-container">
+                <h2 className="form-heading">Create NFT</h2><br />
+                <div className="form-body">
+                  <label>Name </label><br />
+                  <input type="text" placeholder="Enter name"  onChange={handleName} required />
+                  <br />
+                  <label>No of copies </label><br />
+                  <input type="number" min={1} max={1000} step={1} onChange={handleCopies} required  />
+                  <br /><br />
+                  <label>Price </label><br />
+                  <input type="text"  onChange={handleEth} required />
+                  <br /><br />
+                  <button className="btn btn-primary" type="submit"  onClick={createNft}>Create</button><br /><br />
+                </div>
+              </div>
+            </form>
     </div>
   );
 };

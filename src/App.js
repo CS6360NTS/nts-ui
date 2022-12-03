@@ -31,11 +31,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/userpage" element={<UserPage />} />
         <Route path="/sidebar" element={<Sidebar />} />
-        <Route path="/userhome" element={<UserHome />} />
-        <Route path="/createnft" element={<CreateNFT />} />
-        <Route path="/tradenft" element={<TradeNFT />} />
-        <Route path="/transactionlist" element={<TransactionList />} />
-        <Route path="/deposit" element={<Deposit/>}/>
+        <Route path="/userhome/:clientId" element={<UserHome />} />
+        <Route path="/createnft/:clientId" element={<CreateNFT />} />
+        <Route path="/tradenft/:clientId" element={<TradeNFT />} />
+        <Route path="/transactionlist/:clientId" element={<TransactionList />} />
       </Routes>
       <Footer />
     </Router>
