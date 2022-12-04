@@ -42,7 +42,6 @@ const Deposit = () => {
          axios
           .get("/nts/addMoneyFromBofa?clientId="+`${clientId}`+"&amount="+`${creditUSDAmount}`)
           .then((response) => {
-            //console.log();
             if(response.data['success'])
             {
               window.location.href = "http://localhost:3000/userhome/"+`${clientId}`;
@@ -54,7 +53,6 @@ const Deposit = () => {
          axios
           .get("/nts/addMoneyFromBofaToEthWallet?clientId="+`${clientId}`+"&amount="+`${creditEthAmount}`)
           .then((response) => {
-            //console.log();
             if(response.data['success'])
             {
               window.location.href = "http://localhost:3000/userhome/"+`${clientId}`;

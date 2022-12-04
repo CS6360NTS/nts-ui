@@ -115,7 +115,7 @@ const Debit = () => {
                               <input type="text" placeholder="Enter amount in $" onChange={handleDebitAmountUSD} required />
                               <br />
                               <br/>
-                              <button class="btn btn-success" type="submit" onClick={debitFromUSDToWallet}>Add to wallet</button><br /><br />
+                              <button class="btn btn-success" type="submit" onClick={debitFromUSDToWallet}>Withdraw from wallet</button><br /><br />
                           </div>
                       </div>
                   </form>
@@ -128,7 +128,7 @@ const Debit = () => {
                               <label>Amount </label><br />
                               <input type="text" placeholder="Enter amount in Ξ" onChange={handleDebitAmountEth} required />
                               <br /><br />
-                              <button class="btn btn-success" type="submit" onClick={debitFromEthToWallet}>Add to wallet</button><br /><br />
+                              <button class="btn btn-success" type="submit" onClick={debitFromEthToWallet}>Withdraw from wallet</button><br /><br />
                           </div>
                       </div>
                   </form>

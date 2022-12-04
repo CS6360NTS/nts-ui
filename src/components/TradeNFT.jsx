@@ -20,6 +20,7 @@ import { DataTable } from "primereact/datatable";
 import { NavLink } from "react-router-dom";
 import { Column } from "primereact/column";
 import axios from "axios";
+import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -67,17 +68,18 @@ const TradeNFT = () => {
   const [selectedRows, setSelectedRows] = useState(null);
   const [tokenIds, setTokenIds] = useState([])
   const [cartValue, setCartValue] = useState(0);
+  const [ctype, setCType] = useState("");
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
+  const [ethValue, setEthValue] = useState("");
   const [userName, setUserName] = useState("");
     const fetchUserDetails = async () => {
-      // let { clientId } = useParams();
       await axios
         .get("/nts/user?clientId="+`${clientId}`)
         .then((response) => {
-          console.log();
           setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
+          setEthValue(response.data['tradeInfo']['ethBalance'].toFixed(2));
         });
     };
     useEffect(() => {
@@ -88,27 +90,51 @@ const TradeNFT = () => {
     await axios
       .get("/nts/get/trade/nft?clientId="+`${clientId}`)
       .then((response) => {
-        console.log(response)
         setTransactions(response.data['nfts']);
       });
   };
+  
   useEffect(() => {
     fetchTransactionHistory();
     initFilters1();
   }, [id]);
 
-  const buynft = (event) => {
-    console.log(selectedRows);
+  const handleCType = (e) => {
+    setCType(e.target.value);
+  }
+
+  const buynft = (e) => {
     let y = []
     let tc = 0;
     selectedRows.map((x) => {
       y.push(x['tokenId']);
-      tc = tc + (x['ethPrice']);
+      tc = tc + parseFloat(x['ethPrice']);
     })
     setTokenIds(y);
-    console.log(tc);
     setCartValue(tc);
-    console.log(`${cartValue}`);
+    if(tc <= ethValue){
+      e.preventDefault();
+      const body = {
+        "tokenIds": y,
+        "clientId": parseInt(clientId),
+        "totalCartValue":parseFloat(tc),
+        "commissionType": ctype
+      }
+     axios
+      .post("/nts/performTrade", body)
+      .then((response) => {
+        if(response?.data['success'])
+        {
+          window.location.href = "http://localhost:3000/userhome/"+`${clientId}`;
+        }
+      });
+    } else {
+      window.alert('Insufficient Funds!!!!');
+    }
+  }
+
+  const handleSelectionChange = (event) => {
+    setSelectedRows(event.value);
   }
 
   const renderHeader1 = () => {
@@ -122,6 +148,19 @@ const TradeNFT = () => {
             placeholder="Keyword Search"
           />
         </span>
+        <FormControl  variant="standard"  sx={{m: 2, minWidth: 120}}>
+          <InputLabel id="demo-simple-select-label">Commission Type</InputLabel>
+          <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={ctype}
+              label="Commission Type"
+              onChange={handleCType}
+          >
+          <MenuItem value={'eth'}>Ethereum</MenuItem>
+          <MenuItem value={'fiat'}>Fiat</MenuItem>
+        </Select>
+      </FormControl>
         <Button type="button" label="Buy" onClick={buynft}></Button>
       </div>
     );
@@ -331,7 +370,7 @@ const TradeNFT = () => {
         rows={rows1}
         onPage={onCustomPage1}
         width="100px"
-        selection={selectedRows} onSelectionChange={e => setSelectedRows(e.value)}
+        selection={selectedRows} onSelectionChange={handleSelectionChange}
       >
         
         <Column selectionMode="multiple" selectionAriaLabel="name" headerStyle={{ width: '3em' }}></Column>

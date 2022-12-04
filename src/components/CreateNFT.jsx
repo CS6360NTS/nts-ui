@@ -26,7 +26,6 @@ const CreateNFT = (name,eth,noOfCopies) => {
       await axios
         .get("/nts/user?clientId="+`${clientId}`)
         .then((response) => {
-          console.log();
           setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
         });
     };
