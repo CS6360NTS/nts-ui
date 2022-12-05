@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./Register.css";
 import axios from "axios";
 import validation from "./Validation";
-import { Navigate } from "react-router-dom";
 
 function Register() {
   const [values,setValues]=useState({
@@ -87,7 +86,7 @@ const[zipCode,setZipCode]= useState("");
     console.log(e.target.value);
     setZipCode(e.target.value);
     console.log(hashMap[e.target.value]);
-    if(hashMap[e.target.value] != undefined){
+    if(hashMap[e.target.value] !== undefined){
       setCity(hashMap[e.target.value]['City']);
       setState(hashMap[e.target.value]['State']);
     }
