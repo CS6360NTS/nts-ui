@@ -10,3 +10,5 @@ export { default as UserHome } from './UserHome';
 export { default as CreateNFT } from './CreateNFT';
 export { default as TradeNFT } from './TradeNFT';
 export { default as TransactionList } from './TransactionList';
+export { default as Deposit } from './Deposit';
+export {default as Debit } from './Debit'

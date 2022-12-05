@@ -16,6 +16,8 @@ import {
   UserHome,
   CreateNFT,
   TradeNFT,
+  Deposit,
+  Debit
 } from "./components";
 import TransactionList from "./components/TransactionList/TransactionList";
 function App() {
@@ -30,10 +32,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/userpage" element={<UserPage />} />
         <Route path="/sidebar" element={<Sidebar />} />
-        <Route path="/userhome" element={<UserHome />} />
-        <Route path="/createnft" element={<CreateNFT />} />
-        <Route path="/tradenft" element={<TradeNFT />} />
-        <Route path="/transactionlist" element={<TransactionList />} />
+        <Route path="/userhome/:clientId" element={<UserHome />} />
+        <Route path="/createnft/:clientId" element={<CreateNFT />} />
+        <Route path="/tradenft/:clientId" element={<TradeNFT />} />
+        <Route path="/transactionlist/:clientId" element={<TransactionList />} />
+        <Route path="/deposit/:clientId" element={<Deposit/>}/>
+        <Route path="/withdraw/:clientId" element={<Debit/>}/>
       </Routes>
       <Footer />
     </Router>

@@ -5,28 +5,23 @@ function Login() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = () => {
-    const request = { userName: userName, password: password };
-       fetch("/nts/user?clientId=1").then((response) => {
-      console.log(response);
-    });
-    // axios
-    //   .get("/nts/user?clientId=1")
-    //   .then((response) => {
-    //     console.log(response.status);
-    //     console.log(response,"res");
-    //     // if (response.status == 200) {
-    //     //   window.location.href = "http://localhost:3000/sidebar";
-    //     // }
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     window.alert("some exception");
-    //   });
-    // var { name, pwd } = document.forms[0];
-    // console.log(document.forms[0]);
-    // console.log(event.target);
-    window.location.href = "http://localhost:3000/sidebar";
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .get("/nts/user?clientId=1")
+      .then((response) => {
+        window.location.href = "http://localhost:3000/userhome/"+`${userName}`;
+        console.log(response.status);
+        console.log(response,"res");
+        // if (response.status == 200) {
+        //   window.location.href = "http://localhost:3000/sidebar";
+        // }
+      })
+      .catch((error) => {
+        console.log(error);
+        window.alert("some exception");
+      });
+    
   };
 
   const handleUsername = (event) => {
@@ -36,18 +31,13 @@ function Login() {
   const handlePw = (event) => {
     setPassword(event.target.value);
   };
-  useEffect(() => {
-    fetch("/nts/user?clientId=1").then((response) => {
-      console.log(response);
-    });
-  });
-
   return (
     <div className="login">
-      <div class="container-login">
-        <div class="mini-container">
+      <div className="container-login">
+        <div className="mini-container">
           <form className="login-form">
             <div className="form-container">
+              
               <h2 className="form-heading">Login</h2>
               <br />
               <div className="form-body">
