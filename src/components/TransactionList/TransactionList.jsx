@@ -93,7 +93,6 @@ const TransactionList = () => {
       {(rowData['transactionType'] === "Trade" && rowData['transactionStatus'] !== 'Cancelled') ? <Button type="badge badge-primary" onClick={() => { cancelTransaction(rowData) }}>Cancel</Button> : <Button type="badge badge-primary" disabled={true}>Cancel</Button>}
     </div>
   }
-
   const cancelTransaction = (e) => {
     axios
       .get(`/nts/validateAndCancelTheTransaction?transactionId=${e['transactionId']}`)
@@ -105,12 +104,20 @@ const TransactionList = () => {
         }
       })
   }
-
   const clearFilter1 = () => {
     initFilters1();
   };
- 
-
+  const dateTemplate = (rowdata, data) => {
+    return (
+      <text
+        primitive="span"
+        style={{ "text-decoration": "underline", cursor: "pointer" }}
+        onClick={() => hyperLinkClicked(rowdata, data)}
+      >
+        {rowdata[data.field]}
+      </text>
+    );
+  };
   const fetchTransactionHistory = async () => {
     await axios
       .get(`/nts/getAllTransactionsByClientId?clientId=${clientId}`)
@@ -118,7 +125,6 @@ const TransactionList = () => {
         setTransactions(response.data);
       });
   };
-
   const fetchUserDetails = async () => {
     await axios
       .get(`/nts/user?clientId=${clientId}`)
@@ -126,8 +132,71 @@ const TransactionList = () => {
         setUserName(response.data['userInfo']['firstName'] + ", " + response.data['userInfo']['lastName']);
       });
   };
- 
+  const getMoneyData = async () => {
+    await axios
+      .get(
+        `/nts/getAllMoneyTransactionsByTransactionId?transactionId=${test}`
+      )
+      .then((response) => {
+        setMoneyInfo(response.data);
+      });
+  };
+  const getTradeData = async () => {
+    await axios
+      .get(
+        `/nts/getAllTradeTransactionsByTransactionId?transactionId=${test}`
+      )
+      .then((response) => {
+        setTradeInfo(response.data);
+      });
+  };
+  const hyperLinkClicked = (rowdata, data) => {
+    setId(rowdata.transactionId);
+    test = rowdata.transactionId;
+    if (rowdata[data.field] === "Money") {
+      getMoneyData(rowdata.transactionId);
+      setMoneyOpen(true);
+    } else {
+      getTradeData();
+      setTradeOpen(true);
+    }
+  };
+  const initFilters1 = () => {
+    setFilters1({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    });
+    setGlobalFilterValue1("");
+  };
+  const onCustomPage1 = (event) => {
+    setFirst1(event.first);
+    setRows1(event.rows);
+    setCurrentPage(event.page + 1);
+  };
+  const onGlobalFilterChange1 = (e) => {
+    const value = e.target.value;
+    let _filters1 = { ...filters1 };
+    _filters1["global"].value = value;
+    setFilters1(_filters1);
+    setGlobalFilterValue1(value);
+  };
+  const onPageInputChange = (event) => {
+    setCurrentPage(event.target.value);
+  };
+  const onPageInputKeyDown = (event, options) => {
+    if (event.key === "Enter") {
+      const page = parseInt(currentPage);
+      if (page < 1 || page > options.totalPages) {
+        setPageInputTooltip(
+          `Value must be between 1 and ${options.totalPages}.`
+        );
+      } else {
+        const first = currentPage ? options.rows * (page - 1) : 0;
 
+        setFirst1(first);
+        setPageInputTooltip("Press 'Enter' key to go to this page.");
+      }
+    }
+  }; 
   const renderHeader1 = () => {
     return (
       <div className="flex justify-content-between">
@@ -149,11 +218,9 @@ const TransactionList = () => {
       </div>
     );
   };
-  const onCustomPage1 = (event) => {
-    setFirst1(event.first);
-    setRows1(event.rows);
-    setCurrentPage(event.page + 1);
-  };
+  const statusTemplate = (rowData) => {
+    return rowData['transactionStatus'].charAt(0).toUpperCase() + rowData['transactionStatus'].slice(1).toLowerCase();
+  }
   const template1 = {
     layout:
       "PrevPageLink PageLinks NextPageLink RowsPerPageDropdown CurrentPageReport",
@@ -245,86 +312,7 @@ const TransactionList = () => {
       );
     },
   };
-  const onPageInputKeyDown = (event, options) => {
-    if (event.key === "Enter") {
-      const page = parseInt(currentPage);
-      if (page < 1 || page > options.totalPages) {
-        setPageInputTooltip(
-          `Value must be between 1 and ${options.totalPages}.`
-        );
-      } else {
-        const first = currentPage ? options.rows * (page - 1) : 0;
-
-        setFirst1(first);
-        setPageInputTooltip("Press 'Enter' key to go to this page.");
-      }
-    }
-  };
-
-  const onPageInputChange = (event) => {
-    setCurrentPage(event.target.value);
-  };
-  const initFilters1 = () => {
-    setFilters1({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    });
-    setGlobalFilterValue1("");
-  };
-  const dateTemplate = (rowdata, data) => {
-    return (
-      <text
-        primitive="span"
-        style={{ "text-decoration": "underline", cursor: "pointer" }}
-        onClick={() => hyperLinkClicked(rowdata, data)}
-      >
-        {rowdata[data.field]}
-      </text>
-    );
-  };
-
-  const statusTemplate = (rowData) => {
-    return rowData['transactionStatus'].charAt(0).toUpperCase() + rowData['transactionStatus'].slice(1).toLowerCase();
-  }
-
-  const getMoneyData = async () => {
-    await axios
-      .get(
-        `/nts/getAllMoneyTransactionsByTransactionId?transactionId=${test}`
-      )
-      .then((response) => {
-        setMoneyInfo(response.data);
-      });
-  };
-  const getTradeData = async () => {
-    await axios
-      .get(
-        `/nts/getAllTradeTransactionsByTransactionId?transactionId=${test}`
-      )
-      .then((response) => {
-        setTradeInfo(response.data);
-      });
-  };
-  const hyperLinkClicked = (rowdata, data) => {
-    setId(rowdata.transactionId);
-    test = rowdata.transactionId;
-    if (rowdata[data.field] === "Money") {
-      getMoneyData(rowdata.transactionId);
-      setMoneyOpen(true);
-    } else {
-      getTradeData();
-      setTradeOpen(true);
-    }
-  };
-
- 
-
-  const onGlobalFilterChange1 = (e) => {
-    const value = e.target.value;
-    let _filters1 = { ...filters1 };
-    _filters1["global"].value = value;
-    setFilters1(_filters1);
-    setGlobalFilterValue1(value);
-  };
+  
   const header1 = renderHeader1();
 
   return (
