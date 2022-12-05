@@ -113,7 +113,7 @@ function Login() {
                 </button>
                 <br />
                 <br />
-                <a href="#">Forgot Password?</a>
+                <a href="/register">Create an account</a>
               </div>
             </div>
           </form>

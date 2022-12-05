@@ -12,12 +12,14 @@ function Register() {
     phone_no:'',
     cellPhoneNo:'',
     street_address:'',
-    city:'',
-    state:'',
-    zipcode:'',
     password:'',
-    confirm_password:''
-  })
+    confirm_password:'',
+    userType:'T'
+
+  });
+const[city,setCity] = useState("");
+const[state,setState] = useState("");
+const[zipCode,setZipCode]= useState("");
 
   const [errors,setError]=useState({})
   const [isSubmit,setIsSubmit]=useState(false);
@@ -34,8 +36,62 @@ function Register() {
     e.preventDefault();
     setError(validation(values));
     setIsSubmit(true);
+    const req={
+      "userInfo":{
+        "firstName":values.first_name,
+        "lastName":values.last_name,
+        "emailId":values.email_id,
+        "phoneNumber": values.phone_no,
+        "cellPhoneNumber": values.cellPhoneNo,
+        "streetAddress":  values.street_address,
+        "city":  city,
+        "state": state,
+        "zipCode": zipCode,
+        "password": values.password,
+        "userType": values.userType
+      }
+    }
+    axios
+    .post("nts/addUser",req)
+    .then((response)=>{
+      window.location.href = "http://localhost:3000/userhome/"+`${response.data.userInfo.clientId}`;
+    }).catch(
+      (error)=>{
+        window.alert("Error while making API call");
+      
+      }
+    );
   };
+  const hashMap={
+    "75080":{
+      "City":"Richardson",
+      "State":"Texas"
+    },
+    "75462":{
+      "City":"Lamar",
+      "State":"Texas"
+    },
+    "75001":{
+      "City":"Dallas",
+      "State":"Texas"
+    }
+    }
 
+  const handleState = (e) =>{
+    setState(e.target.value);
+  }
+  const handeCity = (e) =>{
+    setCity(e.target.value);
+  }
+  const handleZip = (e) =>{
+    console.log(e.target.value);
+    setZipCode(e.target.value);
+    console.log(hashMap[e.target.value]);
+    if(hashMap[e.target.value] != undefined){
+      setCity(hashMap[e.target.value]['City']);
+      setState(hashMap[e.target.value]['State']);
+    }
+  }
   function handleChange(e){
     setValues({...values,[e.target.name]:e.target.value})
   }
@@ -116,6 +172,13 @@ function Register() {
                 />
                 {errors.cellPhoneNo && <p style={{color:"red", fontSize:"13px"}}>{errors.cellPhoneNo}</p>}
                 <br/>
+                <label>User type </label>
+                <br />
+                <select name="userType" id="cars" style={{width:340}} onChange={handleChange}>
+                      <option value="T">Trader</option>
+                      <option value="M">Manager</option>
+                </select>
+                <br />
                 <label>Street Address </label>
                 <br/>
                 <input
@@ -136,11 +199,11 @@ function Register() {
                   placeholder="Enter the City"
                   name="city"
                   size="40"
-                  value={values.city}
-                  onChange={handleChange}
+                  value={city}
+                  onChange={handeCity}
                   required="true"
                 />
-                {errors.city && <p style={{color:"red", fontSize:"13px"}}>{errors.city}</p>}
+                {/* {errors.city && <p style={{color:"red", fontSize:"13px"}}>{errors.city}</p>} */}
                 <br/>
                 <label>State </label>
                 <br/>
@@ -149,11 +212,11 @@ function Register() {
                   placeholder="Enter State"
                   name="state"
                   size="40"
-                  value={values.state}
-                  onChange={handleChange}
+                  value={state}
+                  onChange={handleState}
                   required="true"
                 />
-                {errors.state && <p style={{color:"red", fontSize:"13px"}}>{errors.state}</p>}
+                {/* {errors.state && <p style={{color:"red", fontSize:"13px"}}>{errors.state}</p>} */}
                 <br/>
                 <label>Zipcode</label>
                 <br/>
@@ -162,11 +225,11 @@ function Register() {
                   placeholder="Enter Zipcode"
                   name="zipcode"
                   size="40"
-                  value={values.zipcode}
-                  onChange={handleChange}
+                  value={zipCode}
+                  onChange={handleZip}
                   required="true"
                 />
-                {errors.zipcode && <p style={{color:"red", fontSize:"13px"}}>{errors.zipcode}</p>}
+                {/* {errors.zipcode && <p style={{color:"red", fontSize:"13px"}}>{errors.zipcode}</p>} */}
                 <br/>
                 <label>Password </label>
                 <br />
@@ -180,19 +243,6 @@ function Register() {
                   required="true"
                 />
                 {errors.password && <p style={{color:"red", fontSize:"13px"}}>{errors.password}</p>}
-                <br />
-                <label>Confirm Password </label>
-                <br />
-                <input
-                  type="password"
-                  placeholder="Re-Enter password"
-                  name="confirm_password"
-                  size="40"
-                  value={values.confirm_password}
-                  onChange={handleChange}
-                  required="true"
-                />
-                {errors.confirm_password && <p style={{color:"red", fontSize:"13px"}}>{errors.confirm_password}</p>}
                 <br/>
                 <br/>
                 <button
