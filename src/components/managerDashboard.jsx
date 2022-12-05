@@ -86,10 +86,7 @@ const ManagerDashboard = () => {
       "sundayFirst" : false
   }
   let maxDate = moment(start).add(24, "hour")
-  let data = [
-    { title: "One", value: 56, color: "#FFC074" },
-    { title: "Two", value: 44, color: "#A2D2FF" },
-  ];
+
   const [moneyInfo, setMoneyInfo] = useState([]);
   const [tradeInfo, setTradeInfo] = useState([]);
   const [tradeOpen, setTradeOpen] = useState(false);
@@ -97,14 +94,9 @@ const ManagerDashboard = () => {
   const [userName, setUserName] = useState("");
   const [ethValue, setEthValue] = useState("");
   const [usdValue, setUSDValue] = useState("");
-  const [selectValue, setSelectValue] = useState(1);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
- const handelSelect=(e) =>
-  {
-    setSelectValue(e.target.value);
-  }
   let { clientId } = useParams();
   const fetchTransactionHistory = async () => {
     // let { clientId } = useParams();
@@ -131,10 +123,11 @@ const ManagerDashboard = () => {
     initFilters1();
   }, [id]);
   const applyCallback = (startDate, endDate) =>{
-    setStartDate(startDate);
-    setEndDate(endDate);
-    console.log(startDate);
-    console.log(endDate);
+    axios
+    .get("/nts/getManagerStatistics?startDate="+`${startDate.format("YYYY-MM-DD")}`+"&"+"endDate=" +`${endDate.format("YYYY-MM-DD")}`)
+    .then((response) => {
+     console.log(response);
+    });
   };
   const handleClose = () => setTradeOpen(false);
   const handleMoneyClose = () => setMoneyOpen(false);
@@ -398,25 +391,25 @@ const ManagerDashboard = () => {
       <div className="col-3">
         <h4 class="display-7"><b>Money Transactions</b></h4>
          <div className="row">
-          <p><b>Total count</b> {usdValue}$</p>
+          <p><b>Total count:</b> 100</p>
          </div>
          <div className="row">
-          <p><b>Success count</b> 20</p>
+          <p><b>Success count:</b> 20</p>
          </div>
          <div className="row">
-          <p><b>Failure count</b> 1</p>
+          <p><b>Failure count:</b> 1</p>
          </div>
       </div>
       <div className="col-3">
         <h4 class="display-7"><b>Trade Transactions</b></h4>
         <div className="row">
-          <p><b>Total count</b> {usdValue}$</p>
+          <p><b>Total count:</b> 100</p>
          </div>
          <div className="row">
-          <p><b>Success count</b> 20</p>
+          <p><b>Success count:</b> 20</p>
          </div>
          <div className="row">
-          <p><b>Failure count</b> 1</p>
+          <p><b>Failure count:</b> 1</p>
          </div>
       </div>
       </div>
