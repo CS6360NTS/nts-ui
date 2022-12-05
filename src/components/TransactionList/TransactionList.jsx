@@ -328,7 +328,9 @@ const TransactionList = () => {
   };
 
   const actionBodyTemplate = (rowData) => {
-    return <Button type="badge badge-primary" onClick={() => { cancelTransaction(rowData) }}>Cancel</Button>;
+    return <div>
+      {( rowData['transactionType'] == "Trade" && rowData['transactionStatus']!='Cancelled') ? <Button type="badge badge-primary" onClick={() => { cancelTransaction(rowData) }}>Cancel</Button> : <Button type="badge badge-primary" disabled={true}>Cancel</Button>}
+      </div>
 }
 
   const onGlobalFilterChange1 = (e) => {
@@ -435,7 +437,6 @@ const TransactionList = () => {
           field="transactionTime"
           header="Transaction Time"
           sortable
-          body={buttonDisplay}
         ></Column>
         <Column
           header="Cancel Transaction"
