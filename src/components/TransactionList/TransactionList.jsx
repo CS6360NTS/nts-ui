@@ -24,6 +24,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import axios from "axios";
 import "./Transaction.css";
+import Alert from 'react-bootstrap/Alert';
 const style = {
   position: "absolute",
   top: "50%",
@@ -70,6 +71,8 @@ const TransactionList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rows1, setRows1] = useState(5);
   const [id, setId] = useState("");
+  const [cancelTid, setCancelTid] = useState("");
+ 
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
@@ -103,6 +106,18 @@ const TransactionList = () => {
   const clearFilter1 = () => {
     initFilters1();
   };
+  const cancelTransaction = (e) => {
+    axios
+      .get("/nts/validateAndCancelTheTransaction?transactionId="+`${e['transactionId']}`)
+      .then((response) => {
+        console.log(response);
+        if(response?.data?.success) {
+          window.location.href = "http://localhost:3000/userhome/"+`${clientId}`;
+        } else {
+          window.alert('Oops!! \n Can\'t revert this transaction as it\'s been more than 15 minutes');
+        }
+      })
+  }
 
   const renderHeader1 = () => {
     return (
@@ -257,6 +272,11 @@ const TransactionList = () => {
       </text>
     );
   };
+
+  const statusTemplate = (rowData) => {
+    return rowData['transactionStatus'].charAt(0).toUpperCase()+ rowData['transactionStatus'].slice(1).toLowerCase();
+  }
+
   const getMoneyData = async () => {
     console.log(test, "in get method");
     console.log(id);
@@ -290,6 +310,10 @@ const TransactionList = () => {
       setTradeOpen(true);
     }
   };
+
+  const actionBodyTemplate = (rowData) => {
+    return <Button type="badge badge-primary" onClick={() => { cancelTransaction(rowData) }}>Cancel</Button>;
+}
 
   const onGlobalFilterChange1 = (e) => {
     const value = e.target.value;
@@ -384,6 +408,7 @@ const TransactionList = () => {
           field="transactionStatus"
           header="Transaction Status"
           sortable
+          body={statusTemplate}
         ></Column>
         <Column
           field="transaction_date"
@@ -394,6 +419,10 @@ const TransactionList = () => {
           field="transactionTime"
           header="Transaction Time"
           sortable
+        ></Column>
+        <Column
+          header="Cancel Transaction"
+          body={actionBodyTemplate}
         ></Column>
       </DataTable>
 

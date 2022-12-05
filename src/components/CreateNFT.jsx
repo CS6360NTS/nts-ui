@@ -107,7 +107,7 @@ const CreateNFT = (name,eth,noOfCopies) => {
                   <label>Price </label><br />
                   <input type="text"  onChange={handleEth} required />
                   <br /><br />
-                  <button className="btn btn-primary" type="submit"  onClick={createNft}>Create</button><br /><br />
+                  <button className="btn btn-success" type="submit"  onClick={createNft}>Create</button><br /><br />
                 </div>
               </div>
             </form>

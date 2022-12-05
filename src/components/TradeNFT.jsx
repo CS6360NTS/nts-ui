@@ -22,6 +22,7 @@ import { Column } from "primereact/column";
 import axios from "axios";
 import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -140,28 +141,34 @@ const TradeNFT = () => {
   const renderHeader1 = () => {
     return (
       <div className="flex justify-content-between">
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue1}
-            onChange={onGlobalFilterChange1}
-            placeholder="Keyword Search"
-          />
-        </span>
-        <FormControl  variant="standard"  sx={{m: 2, minWidth: 120}}>
+        <FormControl variant="standard" sx={{ m: 2, minWidth: 200 }}>
+          <span className="p-input-icon-left">
+            <InputText
+              value={globalFilterValue1}
+              onChange={onGlobalFilterChange1}
+              placeholder="Keyword Search"
+            />
+            <i className="pi pi-search" />
+          </span>
+        </FormControl>
+        
+        <FormControl variant="standard" sx={{ m: 2, minWidth: 200}}>
           <InputLabel id="demo-simple-select-label">Commission Type</InputLabel>
           <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={ctype}
-              label="Commission Type"
-              onChange={handleCType}
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={ctype}
+            label="Commission Type"
+            onChange={handleCType}
           >
-          <MenuItem value={'eth'}>Ethereum</MenuItem>
-          <MenuItem value={'fiat'}>Fiat</MenuItem>
-        </Select>
-      </FormControl>
-        <Button type="button" label="Buy" onClick={buynft}></Button>
+            <MenuItem value={'eth'}>Ethereum</MenuItem>
+            <MenuItem value={'fiat'}>Fiat</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl variant="standard" sx={{ m: 2, minWidth: 200 }}>
+        <Button type="button" label="Buy" onClick={buynft} style={{ width: 100, height: 50, padding: 20 }}></Button>
+        </FormControl>
       </div>
     );
   };
