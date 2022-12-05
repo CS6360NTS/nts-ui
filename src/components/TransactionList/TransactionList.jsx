@@ -242,6 +242,22 @@ const TransactionList = () => {
       </text>
     );
   };
+  const buttonDisplay = (rowdata, data) => {
+    var testDate = rowdata.transaction_date;
+    var testTime = rowdata.transactionTime;
+    let result = testDate.concat("T").concat(testTime);
+    const then = new Date(result);
+    const now = new Date();
+    const msBetweenDates = Math.abs(then.getTime() - now.getTime());
+    const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
+    console.log(hoursBetweenDates,"hoursBetweenDates");
+    return (
+      <div>
+        <text>{rowdata[data.field]}</text>
+        {hoursBetweenDates < 40 ? <button className="button " >cancel</button> : <></>}
+      </div>
+    );
+  };
   const getMoneyData = async () => {
     console.log(test, "in get method");
     console.log(id);
@@ -373,6 +389,7 @@ const TransactionList = () => {
           field="transactionTime"
           header="Transaction Time"
           sortable
+          body={buttonDisplay}
         ></Column>
       </DataTable>
 
