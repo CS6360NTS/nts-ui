@@ -41,8 +41,19 @@ function Login() {
     axios
     .get("/nts/user?clientId="+`${values.name}`)
     .then((response)=>{
-      console.log(response);
-      window.location.href = "http://localhost:3000/userhome/"+`${values.name}`;
+      
+    if(response.data.userInfo.password == values.password){
+      if(response.data.userInfo.userType=="T"){
+        window.location.href = "http://localhost:3000/userhome/"+`${values.name}`;
+       }
+       else 
+       {
+        window.location.href = "http://localhost:3000/managerDashboard/"+`${values.name}`;
+       }
+    }
+    else{
+      window.alert("Invalid credentials");
+    }
       
     }).catch((error) => {
         console.log(error);
