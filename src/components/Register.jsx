@@ -24,7 +24,7 @@ const[zipCode,setZipCode]= useState("");
   const [isSubmit,setIsSubmit]=useState(false);
 
   useEffect(()=>{
-    if(Object.keys(errors).length===0 && (values.first_name!=="" && values.last_name!=="" && values.email_id!=="" && values.phone_no!="" && values.cellPhoneNo!=="" && values.street_address!=="" && values.city!=="" && values.state!="" && values.zipcode!=="" && values.password!=="" && values.confirm_password!=="") && isSubmit){
+    if(Object.keys(errors).length===0 && (values.first_name!=="" && values.last_name!=="" && values.email_id!=="" && values.phone_no!=="" && values.cellPhoneNo!=="" && values.street_address!=="" && values.city!=="" && values.state!=="" && values.zipcode!=="" && values.password!=="" && values.confirm_password!=="") && isSubmit){
       alert("Registration Successful");
       console.log("RESULT")
     }
@@ -53,7 +53,13 @@ const[zipCode,setZipCode]= useState("");
     axios
     .post("nts/addUser",req)
     .then((response)=>{
-      window.location.href = "http://localhost:3000/userhome/"+`${response.data.userInfo.clientId}`;
+      if(response.data.userInfo.userType==="T"){
+        window.location.href = `http://localhost:3000/userhome/${response.data.userInfo.clientId}`;
+       }
+       else 
+       {
+        window.location.href = `http://localhost:3000/managerDashboard/${response.data.userInfo.clientId}`;
+       }
     }).catch(
       (error)=>{
         window.alert("Error while making API call");

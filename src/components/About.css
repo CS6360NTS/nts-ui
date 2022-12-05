@@ -1,17 +1,17 @@
-.img-img{
-width: 100px;
-height: 100px;  
-padding-left: 700px;
-padding-right: 700px;
+.img-img {
+    width: 100px;
+    height: 100px;
+    padding-left: 700px;
+    padding-right: 700px;
 }
 
-.img-fluid{
+.img-fluid {
     width: 100px;
-    height: 100px;  
+    height: 100px;
     background-color: #E1DFBA;
 }
 
-.carousel-cls{
+.carousel-cls {
     width: 1500px;
 }
 
@@ -19,4 +19,4 @@ padding-right: 700px;
     margin: auto;
     width: 50%;
     height: 50%;
-    }
+}
