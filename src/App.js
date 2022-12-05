@@ -9,6 +9,7 @@ import {
   ContactUs,
   Header,
   Login,
+  Register,
   NavigationBar,
   Footer,
   UserPage,
@@ -30,6 +31,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/Register" element={<Register />} />
         <Route path="/userpage" element={<UserPage />} />
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/userhome/:clientId" element={<UserHome />} />
