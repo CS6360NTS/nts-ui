@@ -10,6 +10,9 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from "cdbreact";
+import moment from "moment";
+import {FormControl} from 'react-bootstrap';
+import DateTimeRangeContainer from 'react-advanced-datetimerange-picker'
 import { Ripple } from "primereact/ripple";
 import { Dropdown } from "primereact/dropdown";
 import { classNames } from "primereact/utils";
@@ -17,10 +20,48 @@ import { FilterMatchMode } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { NavLink } from "react-router-dom";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { Column } from "primereact/column";
+import Modal from "@mui/material/Modal";
 import axios from "axios";
+import Form from 'react-bootstrap/Form';
 
-const managerDashboard = () => {
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+const tradeStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 900,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+const moneyStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+const ManagerDashboard = () => {
+  var test;
   const [transactions, setTransactions] = useState([]);
   const [globalFilterValue1, setGlobalFilterValue1] = useState("");
   const [filters1, setFilters1] = useState(null);
@@ -31,17 +72,46 @@ const managerDashboard = () => {
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
+  let now = new Date();
+  let start = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0));
+  let end = moment(start).add(1, "days").subtract(1, "seconds");
+  let ranges = {
+      "Today Only": [moment(start), moment(end)],
+      "Yesterday Only": [moment(start).subtract(1, "days"), moment(end).subtract(1, "days")],
+      "Weekly": [moment(start).subtract(6, "days"), moment(end)],
+      "Monthly": [moment(new Date(now.getFullYear(),now.getMonth(),1,0,0,0,0)), moment(end)]
+  }
+  let local = {
+      "format":"YYYY-DD-MM",
+      "sundayFirst" : false
+  }
+  let maxDate = moment(start).add(24, "hour")
+  let data = [
+    { title: "One", value: 56, color: "#FFC074" },
+    { title: "Two", value: 44, color: "#A2D2FF" },
+  ];
+  const [moneyInfo, setMoneyInfo] = useState([]);
+  const [tradeInfo, setTradeInfo] = useState([]);
+  const [tradeOpen, setTradeOpen] = useState(false);
+  const [moneyOpen, setMoneyOpen] = useState(false);
   const [userName, setUserName] = useState("");
   const [ethValue, setEthValue] = useState("");
   const [usdValue, setUSDValue] = useState("");
+  const [selectValue, setSelectValue] = useState(1);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
+ const handelSelect=(e) =>
+  {
+    setSelectValue(e.target.value);
+  }
   let { clientId } = useParams();
   const fetchTransactionHistory = async () => {
     // let { clientId } = useParams();
     await axios
-      .get("/nts/get/nft?clientId="+`${clientId}`)
+      .get("/nts/getAllTransactions")
       .then((response) => {
-        console.log(response)
-        setTransactions(response.data['nfts']);
+        setTransactions(response.data);
       });
   };
   const fetchUserDetails = async () => {
@@ -60,8 +130,58 @@ const managerDashboard = () => {
     fetchTransactionHistory();
     initFilters1();
   }, [id]);
-
-
+  const applyCallback = (startDate, endDate) =>{
+    setStartDate(startDate);
+    setEndDate(endDate);
+    console.log(startDate);
+    console.log(endDate);
+  };
+  const handleClose = () => setTradeOpen(false);
+  const handleMoneyClose = () => setMoneyOpen(false);
+  const getMoneyData = async () => {
+    console.log(test, "in get method");
+    console.log(id);
+    await axios
+      .get(
+        "/nts/getAllMoneyTransactionsByTransactionId?transactionId=" + `${test}`
+      )
+      .then((response) => {
+        setMoneyInfo(response.data);
+      });
+  };
+  const getTradeData = async () => {
+    await axios
+      .get(
+        "/nts/getAllTradeTransactionsByTransactionId?transactionId=" + `${test}`
+      )
+      .then((response) => {
+        setTradeInfo(response.data);
+      });
+  };
+  const hyperLinkClicked = (rowdata, data) => {
+    setId(rowdata.transactionId);
+    test = rowdata.transactionId;
+    console.log(test, "in set method");
+    console.log(rowdata.transactionId);
+    if (rowdata[data.field] == "Money") {
+      getMoneyData(rowdata.transactionId);
+      setMoneyOpen(true);
+    } else {
+      getTradeData();
+      setTradeOpen(true);
+    }
+  };
+  const dateTemplate = (rowdata, data) => {
+    return (
+      <text
+        primitive="span"
+        style={{ "text-decoration": "underline", cursor: "pointer" }}
+        onClick={() => hyperLinkClicked(rowdata, data)}
+      >
+        {rowdata[data.field]}
+      </text>
+    );
+  };
   const renderHeader1 = () => {
     return (
       <div className="flex justify-content-between">
@@ -230,27 +350,6 @@ const managerDashboard = () => {
             <NavLink exact to={"/userhome/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="home">Home</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to={"/createnft/"+clientId} activeClassName="activeClicked">
-              <CDBSidebarMenuItem icon="plus">Create NFT</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink exact to={"/tradenft/"+clientId} activeClassName="activeClicked">
-              <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink exact to={"/deposit/"+clientId} activeClassName="activeClicked">
-              <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink exact to={"/withdraw/"+clientId} activeClassName="activeClicked">
-                <CDBSidebarMenuItem icon="hand-holding-usd">Withdraw Funds</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink
-              exact
-              to={"/transactionlist/"+clientId}
-              activeClassName="activeClicked"
-            >
-              <CDBSidebarMenuItem icon="list">
-                Transaction List
-              </CDBSidebarMenuItem>
-            </NavLink>
             <NavLink exact to="/login" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="power-off">Sign Out</CDBSidebarMenuItem>
             </NavLink>
@@ -266,64 +365,205 @@ const managerDashboard = () => {
         </CDBSidebarFooter>
       </CDBSidebar>
       <div>
-      <h1>Welcome,  {userName} !</h1>
-      <br/>
-      <h1 class="display-7">Your NFT List</h1>
-      <div class="row" style={{paddingBottom:100}}>
-        <div className="col-10">
-        <DataTable
-          value={transactions}
-          responsiveLayout="scroll"
-          header={header1}
-          filters={filters1}
-          globalFilterFields={[
-            "tokenId",
-            "name",
-            "description",
-            "ethPrice"
-          ]}
-          paginator
-          paginatorTemplate={template1}
-          first={first1}
-          rows={rows1}
-          onPage={onCustomPage1}
-          width="100px"
-        >
-          <Column
-            field="tokenId"
-            header="Token Id"
-          ></Column>
-          <Column
-            field="name"
-            header="Name"
-          ></Column>
-          <Column
-            field="description"
-            header="Description"
-          ></Column>
-          <Column
-            field="ethPrice"
-            header="Ethereum Price"
-          ></Column>
-            <Column
-            field="currentUSDValue"
-            header="USD Price"
-          ></Column>
-        </DataTable>
+      <h3 style={{paddingTop:10,paddingLeft:20}}>Welcome,  {userName} !</h3>
+      <div className="row">
+      <div className="col-5"  style={{paddingLeft:30}}>
+        <DateTimeRangeContainer 
+                        ranges={ranges}
+                        start={start}
+                        end={end}
+                        local={local}
+                        maxDate={maxDate}
+                        applyCallback={applyCallback}
+          >    
+                        <FormControl
+                        id="formControlsTextB"
+                        type="text"
+                        label="Text"
+                        placeholder="Choose the Date range, by default it is monthly"
+                        /> 
+          </DateTimeRangeContainer>
         </div>
-        <div className="col-2">
-        <h4 class="display-7"><b>Balance</b></h4>
+      </div>
+      <div className="row" style={{paddingLeft:22}}>
+      <div className="col-4">
+        <h4 class="display-7"><b>Commisison Balance</b></h4>
          <div className="row">
           <p><b>USD:</b> {usdValue}$</p>
          </div>
          <div className="row">
           <p><b>ETH:</b> {ethValue} Ξ</p>
          </div>
+      </div>
+      <div className="col-3">
+        <h4 class="display-7"><b>Money Transactions</b></h4>
+         <div className="row">
+          <p><b>Total count</b> {usdValue}$</p>
+         </div>
+         <div className="row">
+          <p><b>Success count</b> 20</p>
+         </div>
+         <div className="row">
+          <p><b>Failure count</b> 1</p>
+         </div>
+      </div>
+      <div className="col-3">
+        <h4 class="display-7"><b>Trade Transactions</b></h4>
+        <div className="row">
+          <p><b>Total count</b> {usdValue}$</p>
+         </div>
+         <div className="row">
+          <p><b>Success count</b> 20</p>
+         </div>
+         <div className="row">
+          <p><b>Failure count</b> 1</p>
+         </div>
+      </div>
+      </div>
+      <div className="row">
+        <div className="col">
+        <h4 class="display-7" style={{paddingLeft:20}}>Transaction History</h4>
         </div>
+      </div>
+      <div class="row" style={{paddingBottom:100}}>
+        <div className="col-*" style={{paddingLeft:24}}>
+        <DataTable
+        value={transactions}
+        responsiveLayout="scroll"
+        header={header1}
+        filters={filters1}
+        globalFilterFields={[
+          "transactionType",
+          "transactionStatus",
+          "transaction_date",
+          "transactionTime",
+          "transactionId",
+        ]}
+        paginator
+        paginatorTemplate={template1}
+        first={first1}
+        rows={rows1}
+        onPage={onCustomPage1}
+      >
+        <Column field="transactionId" header="Transaction Id" sortable></Column>
+        <Column field="client_id" header="Client Id" sortable></Column>
+        <Column
+          field="transactionType"
+          header="Transaction Type"
+          sortable
+          body={dateTemplate}
+        ></Column>
+        <Column
+          field="transactionStatus"
+          header="Transaction Status"
+          sortable
+        ></Column>
+        <Column
+          field="transaction_date"
+          header="Transaction Date"
+          sortable
+        ></Column>
+        <Column
+          field="transactionTime"
+          header="Transaction Time"
+          sortable
+        ></Column>
+      </DataTable>
+
+      <Modal
+        open={tradeOpen}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        {tradeOpen && tradeInfo.length !== 0 ? (
+          <Box sx={tradeStyle}>
+            <DataTable value={tradeInfo} responsiveLayout="scroll">
+              <Column
+                field="tradeTransactionType"
+                header="Trade Transaction Type"
+                sortable
+              ></Column>
+              <Column
+                field="ethereumValue"
+                header="Ethereum Value"
+                sortable
+              ></Column>
+              <Column
+                field="commissionType"
+                header="CommissionType"
+                sortable
+              ></Column>
+              <Column field="nftAddress" header="NFT Address" sortable></Column>
+              <Column
+                field="buyerEthereumAddress"
+                header="Buyer Ethereum Address"
+                sortable
+              ></Column>
+              <Column
+                field="sellerEthereumAddress"
+                header="Seller Ethereum Address"
+                sortable
+              ></Column>
+            </DataTable>
+          </Box>
+        ) : (
+          <Box sx={style}>
+            <Typography>No Data Found</Typography>
+          </Box>
+        )}
+      </Modal>
+      <Modal
+        open={moneyOpen}
+        onClose={handleMoneyClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        {moneyOpen ? (
+          <Box sx={moneyStyle}>
+            <table>
+              <tr>
+                <th>Name</th>
+                <th>Info</th>
+              </tr>
+              <tr>
+                <td>Transaction Id</td>
+                <td>{moneyInfo.transactionId}</td>
+              </tr>
+              <tr>
+                <td>Amount</td>
+                <td>{moneyInfo.amount}</td>
+              </tr>
+              <tr>
+                <td>Payment Address</td>
+                <td>{moneyInfo.paymentAddress}</td>
+              </tr>
+              <tr>
+                <td>Money Transaction Type</td>
+                <td>{moneyInfo.moneyTransactionType}</td>
+              </tr>
+              <tr>
+                <td>Eth Usd Value</td>
+                <td>{moneyInfo.ethUsdValue}</td>
+              </tr>
+              <tr>
+                <td>Trans Desc</td>
+                <td>{moneyInfo.transDesc}</td>
+              </tr>
+            </table>
+          </Box>
+        ) : (
+          <Box sx={style}>
+            <Typography>No Data Found</Typography>
+          </Box>
+        )}
+      </Modal>
+        </div>
+        
       </div>
       </div>
       </div>
   );
 };
 
-export default managerDashboard;
+export default ManagerDashboard;

@@ -13,3 +13,4 @@ export { default as TradeNFT } from './TradeNFT';
 export { default as TransactionList } from './TransactionList';
 export { default as Deposit } from './Deposit';
 export {default as Debit } from './Debit'
+export {default as managerDashboard} from './ManagerDashboard'

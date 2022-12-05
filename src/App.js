@@ -20,6 +20,7 @@ import {
   Deposit,
   Debit
 } from "./components";
+import ManagerDashboard from "./components/ManagerDashboard";
 import TransactionList from "./components/TransactionList/TransactionList";
 function App() {
   const [login, setLogin] = useState(false);
@@ -40,6 +41,7 @@ function App() {
         <Route path="/transactionlist/:clientId" element={<TransactionList />} />
         <Route path="/deposit/:clientId" element={<Deposit/>}/>
         <Route path="/withdraw/:clientId" element={<Debit/>}/>
+        <Route path="/managerDashboard/:clientId" element={<ManagerDashboard/>}/>
       </Routes>
       <Footer />
     </Router>

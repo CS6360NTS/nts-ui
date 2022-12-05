@@ -34,39 +34,21 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError(validation(values));
-    setIsSubmit(true);
+    //setError(validation(values));
+    //setIsSubmit(true);
     //setGoToHomePage(true);
-    setGoToManagerDashboard(true);
-    /*axios
+   //setGoToManagerDashboard(true);
+    axios
     .get("/nts/user?clientId="+`${values.name}`)
     .then((response)=>{
-      console.log(response.userType);
-      if(response.userType="T")
-        setGoToHomePage(true);
-      else{
-        //setGoToManagerDashboard(true);
-        console.log('====MANGER===')
-      }
-    })
-    
-    
-
-    /*axios
-      .get("/nts/user?clientId=1")
-      .then((response) => {
-        window.location.href = "http://localhost:3000/userhome/"+`${values.name}`;
-        console.log(response.status);
-        console.log(response,"res");
-        // if (response.status == 200) {
-        //   window.location.href = "http://localhost:3000/sidebar";
-        // }
-      })
-      .catch((error) => {
+      console.log(response);
+      window.location.href = "http://localhost:3000/userhome/"+`${values.name}`;
+      
+    }).catch((error) => {
         console.log(error);
         window.alert("some exception");
       });
-    */
+  
   };
 
   function handleChange(e){
