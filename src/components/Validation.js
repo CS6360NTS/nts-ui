@@ -36,6 +36,7 @@ const Validation=(values)=>{
     if(!values.confirm_password){
         errors.confirm_password="Confirm Password is Required"
     }
+    
     //else if(values.name.length<5){
     //    errors.name="Name must be more than 5 characters"
     //}  
