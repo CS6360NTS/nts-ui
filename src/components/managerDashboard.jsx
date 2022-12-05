@@ -25,7 +25,6 @@ import Box from "@mui/material/Box";
 import { Column } from "primereact/column";
 import Modal from "@mui/material/Modal";
 import axios from "axios";
-import Form from 'react-bootstrap/Form';
 
 const style = {
   position: "absolute",
@@ -94,12 +93,9 @@ const ManagerDashboard = () => {
   const [userName, setUserName] = useState("");
   const [ethValue, setEthValue] = useState("");
   const [usdValue, setUSDValue] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   let { clientId } = useParams();
   const fetchTransactionHistory = async () => {
-    // let { clientId } = useParams();
     await axios
       .get("/nts/getAllTransactions")
       .then((response) => {
@@ -107,9 +103,8 @@ const ManagerDashboard = () => {
       });
   };
   const fetchUserDetails = async () => {
-    // let { clientId } = useParams();
     await axios
-      .get("/nts/user?clientId="+`${clientId}`)
+      .get(`/nts/user?clientId=${clientId}`)
       .then((response) => {
         console.log();
         setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
@@ -124,7 +119,7 @@ const ManagerDashboard = () => {
   }, [id]);
   const applyCallback = (startDate, endDate) =>{
     axios
-    .get("/nts/getManagerStatistics?startDate="+`${startDate.format("YYYY-MM-DD")}`+"&"+"endDate=" +`${endDate.format("YYYY-MM-DD")}`)
+    .get(`/nts/getManagerStatistics?startDate=${startDate.format("YYYY-MM-DD")}&endDate=${endDate.format("YYYY-MM-DD")}`)
     .then((response) => {
      console.log(response);
     });
@@ -136,7 +131,7 @@ const ManagerDashboard = () => {
     console.log(id);
     await axios
       .get(
-        "/nts/getAllMoneyTransactionsByTransactionId?transactionId=" + `${test}`
+        `/nts/getAllMoneyTransactionsByTransactionId?transactionId=${test}`
       )
       .then((response) => {
         setMoneyInfo(response.data);
@@ -145,7 +140,7 @@ const ManagerDashboard = () => {
   const getTradeData = async () => {
     await axios
       .get(
-        "/nts/getAllTradeTransactionsByTransactionId?transactionId=" + `${test}`
+        `/nts/getAllTradeTransactionsByTransactionId?transactionId=${test}`
       )
       .then((response) => {
         setTradeInfo(response.data);
@@ -156,7 +151,7 @@ const ManagerDashboard = () => {
     test = rowdata.transactionId;
     console.log(test, "in set method");
     console.log(rowdata.transactionId);
-    if (rowdata[data.field] == "Money") {
+    if (rowdata[data.field] === "Money") {
       getMoneyData(rowdata.transactionId);
       setMoneyOpen(true);
     } else {
