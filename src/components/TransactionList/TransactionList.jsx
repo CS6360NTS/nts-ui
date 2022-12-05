@@ -24,7 +24,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import axios from "axios";
 import "./Transaction.css";
-import Alert from 'react-bootstrap/Alert';
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -36,6 +36,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
 const moneyStyle = {
   position: "absolute",
   top: "50%",
@@ -47,6 +48,7 @@ const moneyStyle = {
   boxShadow: 24,
   p: 4,
 };
+
 const tradeStyle = {
   position: "absolute",
   top: "50%",
@@ -58,7 +60,9 @@ const tradeStyle = {
   boxShadow: 24,
   p: 4,
 };
+
 const TransactionList = () => {
+  var test;
   let { clientId } = useParams();
   const [transactions, setTransactions] = useState([]);
   const [moneyInfo, setMoneyInfo] = useState([]);
@@ -71,53 +75,58 @@ const TransactionList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rows1, setRows1] = useState(5);
   const [id, setId] = useState("");
-  const [cancelTid, setCancelTid] = useState("");
- 
+  const [userName, setUserName] = useState("");
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
-
-  var test;
   const handleClose = () => setTradeOpen(false);
   const handleMoneyClose = () => setMoneyOpen(false);
-  const fetchTransactionHistory = async () => {
-    await axios
-      .get("/nts/getAllTransactionsByClientId?clientId="+`${clientId}`)
-      .then((response) => {
-        setTransactions(response.data);
-      });
-  };
-  const [userName, setUserName] = useState("");
-  const fetchUserDetails = async () => {
-    // let { clientId } = useParams();
-    await axios
-      .get("/nts/user?clientId="+`${clientId}`)
-      .then((response) => {
-        console.log();
-        setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
-      });
-  };
+  
   useEffect(() => {
     fetchUserDetails();
     fetchTransactionHistory();
     initFilters1();
   }, [id]);
 
-  const clearFilter1 = () => {
-    initFilters1();
-  };
+  const actionBodyTemplate = (rowData) => {
+    return <div>
+      {(rowData['transactionType'] === "Trade" && rowData['transactionStatus'] !== 'Cancelled') ? <Button type="badge badge-primary" onClick={() => { cancelTransaction(rowData) }}>Cancel</Button> : <Button type="badge badge-primary" disabled={true}>Cancel</Button>}
+    </div>
+  }
+
   const cancelTransaction = (e) => {
     axios
-      .get("/nts/validateAndCancelTheTransaction?transactionId="+`${e['transactionId']}`)
+      .get(`/nts/validateAndCancelTheTransaction?transactionId=${e['transactionId']}`)
       .then((response) => {
-        console.log(response);
-        if(response?.data?.success) {
-          window.location.href = "http://localhost:3000/userhome/"+`${clientId}`;
+        if (response?.data?.success) {
+          window.location.href = `http://localhost:3000/userhome/${clientId}`;
         } else {
           window.alert('Oops!! \n Can\'t revert this transaction as it\'s been more than 15 minutes');
         }
       })
   }
+
+  const clearFilter1 = () => {
+    initFilters1();
+  };
+ 
+
+  const fetchTransactionHistory = async () => {
+    await axios
+      .get(`/nts/getAllTransactionsByClientId?clientId=${clientId}`)
+      .then((response) => {
+        setTransactions(response.data);
+      });
+  };
+
+  const fetchUserDetails = async () => {
+    await axios
+      .get(`/nts/user?clientId=${clientId}`)
+      .then((response) => {
+        setUserName(response.data['userInfo']['firstName'] + ", " + response.data['userInfo']['lastName']);
+      });
+  };
+ 
 
   const renderHeader1 = () => {
     return (
@@ -274,31 +283,13 @@ const TransactionList = () => {
   };
 
   const statusTemplate = (rowData) => {
-    return rowData['transactionStatus'].charAt(0).toUpperCase()+ rowData['transactionStatus'].slice(1).toLowerCase();
+    return rowData['transactionStatus'].charAt(0).toUpperCase() + rowData['transactionStatus'].slice(1).toLowerCase();
   }
 
-  const buttonDisplay = (rowdata, data) => {
-    var testDate = rowdata.transaction_date;
-    var testTime = rowdata.transactionTime;
-    let result = testDate.concat("T").concat(testTime);
-    const then = new Date(result);
-    const now = new Date();
-    const msBetweenDates = Math.abs(then.getTime() - now.getTime());
-    const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
-    console.log(hoursBetweenDates,"hoursBetweenDates");
-    return (
-      <div>
-        <text>{rowdata[data.field]}</text>
-        {hoursBetweenDates < 40 ? <button className="button " >cancel</button> : <></>}
-      </div>
-    );
-  };
   const getMoneyData = async () => {
-    console.log(test, "in get method");
-    console.log(id);
     await axios
       .get(
-        "/nts/getAllMoneyTransactionsByTransactionId?transactionId=" + `${test}`
+        `/nts/getAllMoneyTransactionsByTransactionId?transactionId=${test}`
       )
       .then((response) => {
         setMoneyInfo(response.data);
@@ -307,7 +298,7 @@ const TransactionList = () => {
   const getTradeData = async () => {
     await axios
       .get(
-        "/nts/getAllTradeTransactionsByTransactionId?transactionId=" + `${test}`
+        `/nts/getAllTradeTransactionsByTransactionId?transactionId=${test}`
       )
       .then((response) => {
         setTradeInfo(response.data);
@@ -316,9 +307,7 @@ const TransactionList = () => {
   const hyperLinkClicked = (rowdata, data) => {
     setId(rowdata.transactionId);
     test = rowdata.transactionId;
-    console.log(test, "in set method");
-    console.log(rowdata.transactionId);
-    if (rowdata[data.field] == "Money") {
+    if (rowdata[data.field] === "Money") {
       getMoneyData(rowdata.transactionId);
       setMoneyOpen(true);
     } else {
@@ -327,11 +316,7 @@ const TransactionList = () => {
     }
   };
 
-  const actionBodyTemplate = (rowData) => {
-    return <div>
-      {( rowData['transactionType'] == "Trade" && rowData['transactionStatus']!='Cancelled') ? <Button type="badge badge-primary" onClick={() => { cancelTransaction(rowData) }}>Cancel</Button> : <Button type="badge badge-primary" disabled={true}>Cancel</Button>}
-      </div>
-}
+ 
 
   const onGlobalFilterChange1 = (e) => {
     const value = e.target.value;
@@ -371,12 +356,12 @@ const TransactionList = () => {
             <NavLink exact to={"/deposit/" + clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to={"/withdraw/"+clientId} activeClassName="activeClicked">
-                <CDBSidebarMenuItem icon="hand-holding-usd">Withdraw Funds</CDBSidebarMenuItem>
+            <NavLink exact to={"/withdraw/" + clientId} activeClassName="activeClicked">
+              <CDBSidebarMenuItem icon="hand-holding-usd">Withdraw Funds</CDBSidebarMenuItem>
             </NavLink>
             <NavLink
               exact
-              to={"/transactionlist/"+clientId}
+              to={"/transactionlist/" + clientId}
               activeClassName="activeClicked"
             >
               <CDBSidebarMenuItem icon="list">
