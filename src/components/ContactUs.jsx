@@ -4,7 +4,7 @@ function ContactUs() {
   return (
     <div className="contactus">
       <div class="containerc">
-
+        <p> Please reach out to us on NFTs UTD</p>
       </div>
     </div>
   );

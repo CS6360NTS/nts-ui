@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
+  useParams
+} from "react-router-dom";
+import {
   CDBSidebar,
   CDBSidebarContent,
   CDBSidebarFooter,
@@ -7,41 +10,29 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from "cdbreact";
-import {
-  useParams
-} from "react-router-dom";
+import moment from "moment";
+import {FormControl} from 'react-bootstrap';
+import DateTimeRangeContainer from 'react-advanced-datetimerange-picker'
 import { Ripple } from "primereact/ripple";
 import { Dropdown } from "primereact/dropdown";
 import { classNames } from "primereact/utils";
 import { FilterMatchMode } from "primereact/api";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { NavLink } from "react-router-dom";
-import { Column } from "primereact/column";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { Column } from "primereact/column";
 import Modal from "@mui/material/Modal";
 import axios from "axios";
-import "./Transaction.css";
-import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
+
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-const moneyStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 600,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -58,36 +49,63 @@ const tradeStyle = {
   boxShadow: 24,
   p: 4,
 };
-const TransactionList = () => {
-  let { clientId } = useParams();
+const moneyStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+const ManagerDashboard = () => {
+  var test;
   const [transactions, setTransactions] = useState([]);
-  const [moneyInfo, setMoneyInfo] = useState([]);
-  const [tradeInfo, setTradeInfo] = useState([]);
-  const [tradeOpen, setTradeOpen] = useState(false);
-  const [moneyOpen, setMoneyOpen] = useState(false);
   const [globalFilterValue1, setGlobalFilterValue1] = useState("");
   const [filters1, setFilters1] = useState(null);
   const [first1, setFirst1] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [rows1, setRows1] = useState(5);
   const [id, setId] = useState("");
-  const [cancelTid, setCancelTid] = useState("");
- 
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
+  let now = new Date();
+  let start = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0));
+  let end = moment(start).add(1, "days").subtract(1, "seconds");
+  let ranges = {
+      "Today Only": [moment(start), moment(end)],
+      "Yesterday Only": [moment(start).subtract(1, "days"), moment(end).subtract(1, "days")],
+      "Weekly": [moment(start).subtract(6, "days"), moment(end)],
+      "Monthly": [moment(new Date(now.getFullYear(),now.getMonth(),1,0,0,0,0)), moment(end)]
+  }
+  let local = {
+      "format":"YYYY-DD-MM",
+      "sundayFirst" : false
+  }
+  let maxDate = moment(start).add(24, "hour")
 
-  var test;
-  const handleClose = () => setTradeOpen(false);
-  const handleMoneyClose = () => setMoneyOpen(false);
+  const [moneyInfo, setMoneyInfo] = useState([]);
+  const [tradeInfo, setTradeInfo] = useState([]);
+  const [tradeOpen, setTradeOpen] = useState(false);
+  const [moneyOpen, setMoneyOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [ethValue, setEthValue] = useState("");
+  const [usdValue, setUSDValue] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  let { clientId } = useParams();
   const fetchTransactionHistory = async () => {
+    // let { clientId } = useParams();
     await axios
-      .get("/nts/getAllTransactionsByClientId?clientId="+`${clientId}`)
+      .get("/nts/getAllTransactions")
       .then((response) => {
         setTransactions(response.data);
       });
   };
-  const [userName, setUserName] = useState("");
   const fetchUserDetails = async () => {
     // let { clientId } = useParams();
     await axios
@@ -95,6 +113,8 @@ const TransactionList = () => {
       .then((response) => {
         console.log();
         setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
+        setEthValue(response.data['tradeInfo']['ethBalance'].toFixed(2));
+        setUSDValue(response.data['tradeInfo']['balance'].toFixed(2));
       });
   };
   useEffect(() => {
@@ -102,33 +122,62 @@ const TransactionList = () => {
     fetchTransactionHistory();
     initFilters1();
   }, [id]);
-
-  const clearFilter1 = () => {
-    initFilters1();
-  };
-  const cancelTransaction = (e) => {
+  const applyCallback = (startDate, endDate) =>{
     axios
-      .get("/nts/validateAndCancelTheTransaction?transactionId="+`${e['transactionId']}`)
+    .get("/nts/getManagerStatistics?startDate="+`${startDate.format("YYYY-MM-DD")}`+"&"+"endDate=" +`${endDate.format("YYYY-MM-DD")}`)
+    .then((response) => {
+     console.log(response);
+    });
+  };
+  const handleClose = () => setTradeOpen(false);
+  const handleMoneyClose = () => setMoneyOpen(false);
+  const getMoneyData = async () => {
+    console.log(test, "in get method");
+    console.log(id);
+    await axios
+      .get(
+        "/nts/getAllMoneyTransactionsByTransactionId?transactionId=" + `${test}`
+      )
       .then((response) => {
-        console.log(response);
-        if(response?.data?.success) {
-          window.location.href = "http://localhost:3000/userhome/"+`${clientId}`;
-        } else {
-          window.alert('Oops!! \n Can\'t revert this transaction as it\'s been more than 15 minutes');
-        }
-      })
-  }
-
+        setMoneyInfo(response.data);
+      });
+  };
+  const getTradeData = async () => {
+    await axios
+      .get(
+        "/nts/getAllTradeTransactionsByTransactionId?transactionId=" + `${test}`
+      )
+      .then((response) => {
+        setTradeInfo(response.data);
+      });
+  };
+  const hyperLinkClicked = (rowdata, data) => {
+    setId(rowdata.transactionId);
+    test = rowdata.transactionId;
+    console.log(test, "in set method");
+    console.log(rowdata.transactionId);
+    if (rowdata[data.field] == "Money") {
+      getMoneyData(rowdata.transactionId);
+      setMoneyOpen(true);
+    } else {
+      getTradeData();
+      setTradeOpen(true);
+    }
+  };
+  const dateTemplate = (rowdata, data) => {
+    return (
+      <text
+        primitive="span"
+        style={{ "text-decoration": "underline", cursor: "pointer" }}
+        onClick={() => hyperLinkClicked(rowdata, data)}
+      >
+        {rowdata[data.field]}
+      </text>
+    );
+  };
   const renderHeader1 = () => {
     return (
       <div className="flex justify-content-between">
-        <Button
-          type="button"
-          icon="pi pi-filter-slash"
-          label="Clear"
-          className="p-button-outlined"
-          onClick={clearFilter1}
-        />
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
@@ -140,6 +189,7 @@ const TransactionList = () => {
       </div>
     );
   };
+
   const onCustomPage1 = (event) => {
     setFirst1(event.first);
     setRows1(event.rows);
@@ -261,75 +311,7 @@ const TransactionList = () => {
     });
     setGlobalFilterValue1("");
   };
-  const dateTemplate = (rowdata, data) => {
-    return (
-      <text
-        primitive="span"
-        style={{ "text-decoration": "underline", cursor: "pointer" }}
-        onClick={() => hyperLinkClicked(rowdata, data)}
-      >
-        {rowdata[data.field]}
-      </text>
-    );
-  };
 
-  const statusTemplate = (rowData) => {
-    return rowData['transactionStatus'].charAt(0).toUpperCase()+ rowData['transactionStatus'].slice(1).toLowerCase();
-  }
-
-  const buttonDisplay = (rowdata, data) => {
-    var testDate = rowdata.transaction_date;
-    var testTime = rowdata.transactionTime;
-    let result = testDate.concat("T").concat(testTime);
-    const then = new Date(result);
-    const now = new Date();
-    const msBetweenDates = Math.abs(then.getTime() - now.getTime());
-    const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
-    console.log(hoursBetweenDates,"hoursBetweenDates");
-    return (
-      <div>
-        <text>{rowdata[data.field]}</text>
-        {hoursBetweenDates < 40 ? <button className="button " >cancel</button> : <></>}
-      </div>
-    );
-  };
-  const getMoneyData = async () => {
-    console.log(test, "in get method");
-    console.log(id);
-    await axios
-      .get(
-        "/nts/getAllMoneyTransactionsByTransactionId?transactionId=" + `${test}`
-      )
-      .then((response) => {
-        setMoneyInfo(response.data);
-      });
-  };
-  const getTradeData = async () => {
-    await axios
-      .get(
-        "/nts/getAllTradeTransactionsByTransactionId?transactionId=" + `${test}`
-      )
-      .then((response) => {
-        setTradeInfo(response.data);
-      });
-  };
-  const hyperLinkClicked = (rowdata, data) => {
-    setId(rowdata.transactionId);
-    test = rowdata.transactionId;
-    console.log(test, "in set method");
-    console.log(rowdata.transactionId);
-    if (rowdata[data.field] == "Money") {
-      getMoneyData(rowdata.transactionId);
-      setMoneyOpen(true);
-    } else {
-      getTradeData();
-      setTradeOpen(true);
-    }
-  };
-
-  const actionBodyTemplate = (rowData) => {
-    return <Button type="badge badge-primary" onClick={() => { cancelTransaction(rowData) }}>Cancel</Button>;
-}
 
   const onGlobalFilterChange1 = (e) => {
     const value = e.target.value;
@@ -341,6 +323,7 @@ const TransactionList = () => {
   const header1 = renderHeader1();
 
   return (
+   
     <div
       style={{ display: "flex", height: "100vh", overflow: "scroll initial" }}
     >
@@ -351,35 +334,14 @@ const TransactionList = () => {
             className="text-decoration-none"
             style={{ color: "inherit" }}
           >
-            {userName}
+           {userName}
           </a>
         </CDBSidebarHeader>
 
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
-            <NavLink exact to={"/userhome/" + clientId} activeClassName="activeClicked">
+            <NavLink exact to={"/userhome/"+clientId} activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="home">Home</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink exact to={"/createnft/" + clientId} activeClassName="activeClicked">
-              <CDBSidebarMenuItem icon="plus">Create NFT</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink exact to={"/tradenft/" + clientId} activeClassName="activeClicked">
-              <CDBSidebarMenuItem icon="coins">Trade NFT</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink exact to={"/deposit/" + clientId} activeClassName="activeClicked">
-              <CDBSidebarMenuItem icon="wallet">Deposit Funds</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink exact to={"/withdraw/"+clientId} activeClassName="activeClicked">
-                <CDBSidebarMenuItem icon="hand-holding-usd">Withdraw Funds</CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink
-              exact
-              to={"/transactionlist/"+clientId}
-              activeClassName="activeClicked"
-            >
-              <CDBSidebarMenuItem icon="list">
-                Transaction List
-              </CDBSidebarMenuItem>
             </NavLink>
             <NavLink exact to="/login" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="power-off">Sign Out</CDBSidebarMenuItem>
@@ -395,7 +357,70 @@ const TransactionList = () => {
           ></div>
         </CDBSidebarFooter>
       </CDBSidebar>
-      <DataTable
+      <div>
+      <h3 style={{paddingTop:10,paddingLeft:20}}>Welcome,  {userName} !</h3>
+      <div className="row">
+      <div className="col-5"  style={{paddingLeft:30}}>
+        <DateTimeRangeContainer 
+                        ranges={ranges}
+                        start={start}
+                        end={end}
+                        local={local}
+                        maxDate={maxDate}
+                        applyCallback={applyCallback}
+          >    
+                        <FormControl
+                        id="formControlsTextB"
+                        type="text"
+                        label="Text"
+                        placeholder="Choose the Date range, by default it is monthly"
+                        /> 
+          </DateTimeRangeContainer>
+        </div>
+      </div>
+      <div className="row" style={{paddingLeft:22}}>
+      <div className="col-4">
+        <h4 class="display-7"><b>Commisison Balance</b></h4>
+         <div className="row">
+          <p><b>USD:</b> {usdValue}$</p>
+         </div>
+         <div className="row">
+          <p><b>ETH:</b> {ethValue} Ξ</p>
+         </div>
+      </div>
+      <div className="col-3">
+        <h4 class="display-7"><b>Money Transactions</b></h4>
+         <div className="row">
+          <p><b>Total count:</b> 100</p>
+         </div>
+         <div className="row">
+          <p><b>Success count:</b> 20</p>
+         </div>
+         <div className="row">
+          <p><b>Failure count:</b> 1</p>
+         </div>
+      </div>
+      <div className="col-3">
+        <h4 class="display-7"><b>Trade Transactions</b></h4>
+        <div className="row">
+          <p><b>Total count:</b> 100</p>
+         </div>
+         <div className="row">
+          <p><b>Success count:</b> 20</p>
+         </div>
+         <div className="row">
+          <p><b>Failure count:</b> 1</p>
+         </div>
+      </div>
+      </div>
+      <div className="row">
+        <div className="col">
+        <h4 class="display-7" style={{paddingLeft:20}}>Transaction History</h4>
+        </div>
+      </div>
+      <div class="row" style={{paddingBottom:100}}>
+        <div className="col-*" style={{paddingLeft:24}}>
+        <DataTable
         value={transactions}
         responsiveLayout="scroll"
         header={header1}
@@ -414,6 +439,7 @@ const TransactionList = () => {
         onPage={onCustomPage1}
       >
         <Column field="transactionId" header="Transaction Id" sortable></Column>
+        <Column field="client_id" header="Client Id" sortable></Column>
         <Column
           field="transactionType"
           header="Transaction Type"
@@ -424,7 +450,6 @@ const TransactionList = () => {
           field="transactionStatus"
           header="Transaction Status"
           sortable
-          body={statusTemplate}
         ></Column>
         <Column
           field="transaction_date"
@@ -435,11 +460,6 @@ const TransactionList = () => {
           field="transactionTime"
           header="Transaction Time"
           sortable
-          body={buttonDisplay}
-        ></Column>
-        <Column
-          header="Cancel Transaction"
-          body={actionBodyTemplate}
         ></Column>
       </DataTable>
 
@@ -531,8 +551,12 @@ const TransactionList = () => {
           </Box>
         )}
       </Modal>
-    </div>
+        </div>
+        
+      </div>
+      </div>
+      </div>
   );
 };
 
-export default TransactionList;
+export default ManagerDashboard;

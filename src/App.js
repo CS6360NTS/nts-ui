@@ -9,6 +9,7 @@ import {
   ContactUs,
   Header,
   Login,
+  Register,
   NavigationBar,
   Footer,
   UserPage,
@@ -19,6 +20,7 @@ import {
   Deposit,
   Debit
 } from "./components";
+import ManagerDashboard from "./components/ManagerDashboard";
 import TransactionList from "./components/TransactionList/TransactionList";
 function App() {
   const [login, setLogin] = useState(false);
@@ -30,6 +32,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/Register" element={<Register />} />
         <Route path="/userpage" element={<UserPage />} />
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/userhome/:clientId" element={<UserHome />} />
@@ -38,6 +41,7 @@ function App() {
         <Route path="/transactionlist/:clientId" element={<TransactionList />} />
         <Route path="/deposit/:clientId" element={<Deposit/>}/>
         <Route path="/withdraw/:clientId" element={<Debit/>}/>
+        <Route path="/managerDashboard/:clientId" element={<ManagerDashboard/>}/>
       </Routes>
       <Footer />
     </Router>

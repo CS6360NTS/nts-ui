@@ -1,0 +1,36 @@
+.container-register {
+    background-image: url("./nft.webp");
+  }
+  
+  .register-form {
+    width: 500px;
+    height: auto;
+    box-shadow: rgb(0 0 0 / 16%) 1px 1px 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    align-items: center;
+    background-color: beige;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .mini-container {
+    padding-top: 50px;
+    padding-left: 500px;
+    padding-right: 100px;
+    padding-bottom: 50px;
+  }
+  
+  .form-heading {
+    margin-bottom: 1em;
+    font-size: 24px;
+    color: rgb(34, 34, 34);
+    font-weight: 800;
+  }
+  
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(34, 34, 34);
+  }
+  
