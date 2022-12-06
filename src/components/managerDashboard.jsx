@@ -25,6 +25,9 @@ import Box from "@mui/material/Box";
 import { Column } from "primereact/column";
 import Modal from "@mui/material/Modal";
 import axios from "axios";
+import Form from 'react-bootstrap/Form';
+import { Chart } from "react-google-charts";
+
 
 const style = {
   position: "absolute",
@@ -59,6 +62,19 @@ const moneyStyle = {
   boxShadow: 24,
   p: 4,
 };
+
+const sty = {
+  height: "100%",
+    width: "160px",
+    position: "fixed",
+    zindex: "1",
+    top: 0,
+    left: 0,
+    backgroundColor: "#111",
+    overflowX: "hidden",
+    paddingTop: "20px",
+};
+
 const ManagerDashboard = () => {
   var test;
   const [transactions, setTransactions] = useState([]);
@@ -93,9 +109,46 @@ const ManagerDashboard = () => {
   const [userName, setUserName] = useState("");
   const [ethValue, setEthValue] = useState("");
   const [usdValue, setUSDValue] = useState("");
+  const [ethCommissionAmount, setEthCommissionAmount] = useState(0);
+  const [faitCommissionAmount, setFaitCommissionAmount] = useState(0);
+  const [moneyTransactionCount, setMoneyTransactionCount] = useState(0);
+  const [tradeTransactionCancellCount, setTradeTransactionCancellCount] = useState(0);
+  const [tradeTransactionCount, setTradeTransactionCount] = useState(0);
+  const [tradeTransactionSuccessCount, setTradeTransactionSuccessCount] = useState(0);
+
+  const data1 = [
+    ["Type", "Percentage share"],
+    ["Money", moneyTransactionCount],
+    ["Trade", tradeTransactionCount],
+  ];
+  
+   const options1 = {
+    title: "Percentage of money and trade transactions",
+  };
+
+  const data2 = [
+    ["Type", "Percentage Share"],
+    ["Success", moneyTransactionCount],
+    ["Fail", 0],
+  ];
+  
+   const options2 = {
+    title: "Percentage of successful and failed money transactions",
+  };
+
+  const data3 = [
+    ["Type", "Percentage Share"],
+    ["Success", tradeTransactionSuccessCount],
+    ["Fail", tradeTransactionCancellCount],
+  ];
+
+  const options3 = {
+    title: "Percentage of successful and cancelled trade transactions",
+  };
 
   let { clientId } = useParams();
   const fetchTransactionHistory = async () => {
+    // let { clientId } = useParams();
     await axios
       .get("/nts/getAllTransactions")
       .then((response) => {
@@ -103,8 +156,9 @@ const ManagerDashboard = () => {
       });
   };
   const fetchUserDetails = async () => {
+    // let { clientId } = useParams();
     await axios
-      .get(`/nts/user?clientId=${clientId}`)
+      .get("/nts/user?clientId="+`${clientId}`)
       .then((response) => {
         console.log();
         setUserName(response.data['userInfo']['firstName'] +", "+response.data['userInfo']['lastName']);
@@ -113,15 +167,26 @@ const ManagerDashboard = () => {
       });
   };
   useEffect(() => {
+    //applyCallback();
+    let now = new Date();
+    let start = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0));
+    let end = moment(start).add(1, "days").subtract(1, "seconds");
+    let start2 = moment(end).subtract(30,"days");
+    applyCallback(start2,end);
     fetchUserDetails();
     fetchTransactionHistory();
     initFilters1();
   }, [id]);
   const applyCallback = (startDate, endDate) =>{
     axios
-    .get(`/nts/getManagerStatistics?startDate=${startDate.format("YYYY-MM-DD")}&endDate=${endDate.format("YYYY-MM-DD")}`)
+    .get("/nts/getManagerStatistics?startDate="+`${startDate.format("YYYY-MM-DD")}`+"&"+"endDate=" +`${endDate.format("YYYY-MM-DD")}`)
     .then((response) => {
-     console.log(response);
+      setEthCommissionAmount(response.data.ethCommissionAmount);
+      setFaitCommissionAmount(response.data.faitCommissionAmount);
+      setMoneyTransactionCount(response.data.moneyTransactionCount);
+      setTradeTransactionCancellCount(response.data.tradeTransactionCancellCount);
+      setTradeTransactionCount(response.data.tradeTransactionCount);
+      setTradeTransactionSuccessCount(response.data.tradeTransactionSuccessCount);
     });
   };
   const handleClose = () => setTradeOpen(false);
@@ -131,7 +196,7 @@ const ManagerDashboard = () => {
     console.log(id);
     await axios
       .get(
-        `/nts/getAllMoneyTransactionsByTransactionId?transactionId=${test}`
+        "/nts/getAllMoneyTransactionsByTransactionId?transactionId=" + `${test}`
       )
       .then((response) => {
         setMoneyInfo(response.data);
@@ -140,7 +205,7 @@ const ManagerDashboard = () => {
   const getTradeData = async () => {
     await axios
       .get(
-        `/nts/getAllTradeTransactionsByTransactionId?transactionId=${test}`
+        "/nts/getAllTradeTransactionsByTransactionId?transactionId=" + `${test}`
       )
       .then((response) => {
         setTradeInfo(response.data);
@@ -151,7 +216,7 @@ const ManagerDashboard = () => {
     test = rowdata.transactionId;
     console.log(test, "in set method");
     console.log(rowdata.transactionId);
-    if (rowdata[data.field] === "Money") {
+    if (rowdata[data.field] == "Money") {
       getMoneyData(rowdata.transactionId);
       setMoneyOpen(true);
     } else {
@@ -352,8 +417,9 @@ const ManagerDashboard = () => {
           ></div>
         </CDBSidebarFooter>
       </CDBSidebar>
-      <div>
-      <h3 style={{paddingTop:10,paddingLeft:20}}>Welcome,  {userName} !</h3>
+      
+      <div height="100%" display="inline">
+      <h3 style={{paddingTop:10,paddingLeft:20}}><b>Welcome,  {userName} !</b></h3>
       <div className="row">
       <div className="col-5"  style={{paddingLeft:30}}>
         <DateTimeRangeContainer 
@@ -373,44 +439,51 @@ const ManagerDashboard = () => {
           </DateTimeRangeContainer>
         </div>
       </div>
+          <div className="row">
+            <div className="col-4">
+            <Chart
+      chartType="PieChart"
+      data={data1}
+      options={options1}
+      width={"100%"}
+      height={"200px"}
+        />
+
+            </div>
+
+            <div className="col-4">
+            <Chart
+      chartType="PieChart"
+      data={data2}
+      options={options2}
+      width={"100%"}
+      height={"200px"}
+        />
+            </div>
+            <div className="col-4">
+            <Chart
+      chartType="PieChart"
+      data={data3}
+      options={options3}
+      width={"100%"}
+      height={"200px"}
+        />
+            </div>
+          </div>
       <div className="row" style={{paddingLeft:22}}>
-      <div className="col-4">
-        <h4 class="display-7"><b>Commisison Balance</b></h4>
-         <div className="row">
-          <p><b>USD:</b> {usdValue}$</p>
-         </div>
-         <div className="row">
-          <p><b>ETH:</b> {ethValue} Ξ</p>
-         </div>
-      </div>
-      <div className="col-3">
-        <h4 class="display-7"><b>Money Transactions</b></h4>
-         <div className="row">
-          <p><b>Total count:</b> 100</p>
-         </div>
-         <div className="row">
-          <p><b>Success count:</b> 20</p>
-         </div>
-         <div className="row">
-          <p><b>Failure count:</b> 1</p>
-         </div>
-      </div>
-      <div className="col-3">
-        <h4 class="display-7"><b>Trade Transactions</b></h4>
-        <div className="row">
-          <p><b>Total count:</b> 100</p>
-         </div>
-         <div className="row">
-          <p><b>Success count:</b> 20</p>
-         </div>
-         <div className="row">
-          <p><b>Failure count:</b> 1</p>
-         </div>
-      </div>
+        <div className="col-4">
+          <h3 class="display-7"><b>Commission Balance</b></h3>
+        </div>
+        <div className="col">
+        <h4><b>USD:</b> {faitCommissionAmount}$</h4>
+        </div>
+        <div className="col">
+        <h4><b>ETH:</b> {ethCommissionAmount} Ξ</h4>
+        </div>
       </div>
       <div className="row">
         <div className="col">
-        <h4 class="display-7" style={{paddingLeft:20}}>Transaction History</h4>
+        <h3 class="display-7" style={{paddingLeft:20}}><b>Transaction History</b></h3>
         </div>
       </div>
       <div class="row" style={{paddingBottom:100}}>
