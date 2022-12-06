@@ -251,9 +251,6 @@ const UserHome = () => {
                 Transaction List
               </CDBSidebarMenuItem>
             </NavLink>
-            <NavLink exact to={"/profile/"+clientId} activeClassName="activeClicked">
-                <CDBSidebarMenuItem icon="user">Profile</CDBSidebarMenuItem>
-            </NavLink>
             <NavLink exact to="/login" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="power-off">Sign Out</CDBSidebarMenuItem>
             </NavLink>
@@ -269,11 +266,22 @@ const UserHome = () => {
         </CDBSidebarFooter>
       </CDBSidebar>
       <div>
-      <h1>Welcome,  {userName} !</h1>
+      <h3 style={{paddingLeft:22}}><b>Welcome,  {userName} !</b></h3>
       <br/>
-      <h1 class="display-7">Your NFT List</h1>
+      <div className="row" style={{paddingLeft:22}}>
+        <div className="col-4">
+          <h3 class="display-7"><b>Balance</b></h3>
+        </div>
+        <div className="col">
+        <h4><b>USD: </b> {usdValue}$</h4>
+        </div>
+        <div className="col">
+        <h4><b>ETH: </b> {ethValue} Ξ</h4>
+        </div>
+      </div>
+      <h3 class="display-7" style={{paddingLeft:22}}><b>Your NFT List</b></h3>
       <div class="row" style={{paddingBottom:100}}>
-        <div className="col-10">
+        <div className="col-*">
         <DataTable
           value={transactions}
           responsiveLayout="scroll"
@@ -290,7 +298,6 @@ const UserHome = () => {
           first={first1}
           rows={rows1}
           onPage={onCustomPage1}
-          width="100px"
         >
           <Column
             field="tokenId"
@@ -313,15 +320,6 @@ const UserHome = () => {
             header="USD Price"
           ></Column>
         </DataTable>
-        </div>
-        <div className="col-2">
-        <h4 class="display-7"><b>Balance</b></h4>
-         <div className="row">
-          <p><b>USD:</b> {usdValue}$</p>
-         </div>
-         <div className="row">
-          <p><b>ETH:</b> {ethValue} Ξ</p>
-         </div>
         </div>
       </div>
       </div>

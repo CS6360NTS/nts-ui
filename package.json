@@ -24,6 +24,7 @@
     "react-bootstrap": "^2.6.0",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
+    "react-google-charts": "^4.0.0",
     "react-loader-spinner": "^5.3.4",
     "react-responsive": "^9.0.0",
     "react-responsive-carousel": "^3.2.23",
