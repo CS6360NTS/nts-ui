@@ -5,17 +5,18 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import {
   About,
   ContactUs,
+  CreateNFT,
+  Debit,
+  Deposit,
+  Footer,
   Header,
   Login,
-  Register,
   NavigationBar,
-  Footer,
+  Profile,
+  Register,
   Sidebar,
-  UserHome,
-  CreateNFT,
   TradeNFT,
-  Deposit,
-  Debit
+  UserHome,
 } from "./components";
 import ManagerDashboard from "./components/ManagerDashboard";
 import TransactionList from "./components/TransactionList/TransactionList";
@@ -37,6 +38,7 @@ function App() {
         <Route path="/deposit/:clientId" element={<Deposit/>}/>
         <Route path="/withdraw/:clientId" element={<Debit/>}/>
         <Route path="/managerDashboard/:clientId" element={<ManagerDashboard/>}/>
+        <Route path="/profile/:clientId" element={<Profile/>}/>
       </Routes>
       <Footer />
     </Router>

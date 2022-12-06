@@ -345,6 +345,9 @@ const TradeNFT = () => {
                 Transaction List
               </CDBSidebarMenuItem>
             </NavLink>
+            <NavLink exact to={"/profile/"+clientId} activeClassName="activeClicked">
+                <CDBSidebarMenuItem icon="user">Profile</CDBSidebarMenuItem>
+            </NavLink>
             <NavLink exact to="/login" activeClassName="activeClicked">
               <CDBSidebarMenuItem icon="power-off">Sign Out</CDBSidebarMenuItem>
             </NavLink>
