@@ -27,7 +27,7 @@ function App() {
       <NavigationBar />
       <Routes>
         <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<ContactUs />} />
+        {/* <Route path="/contact" element={<ContactUs />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/sidebar" element={<Sidebar />} />
