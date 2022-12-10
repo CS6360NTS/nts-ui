@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   useParams
 } from "react-router-dom";
+import Switch from "react-switch";
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -60,8 +61,20 @@ const UserHome = () => {
     fetchTransactionHistory();
     initFilters1();
   }, [id]);
-
-
+  const handleChange = (rowData)=>{
+    rowData['openForTrade']=!rowData['openForTrade'];
+    axios
+    .post("/nts/updateNft",rowData)
+    .then((response)=>{
+      window.location.reload(true); 
+    }).
+    catch((error)=>{window.alert("Error while making API call");});
+  }
+  const actionBodyTemplate = (rowData) => {
+    return <div>
+      {<Switch onChange={()=>{handleChange(rowData)}} checked={rowData['openForTrade']}/>}
+    </div>
+  }
   const renderHeader1 = () => {
     return (
       <div className="flex justify-content-between">
@@ -221,7 +234,7 @@ const UserHome = () => {
             className="text-decoration-none"
             style={{ color: "inherit" }}
           >
-           {userName}
+           {userName} 
           </a>
         </CDBSidebarHeader>
 
@@ -269,7 +282,7 @@ const UserHome = () => {
         </CDBSidebarFooter>
       </CDBSidebar>
       <div>
-      <h3 style={{paddingLeft:22}}><b>Welcome,  {userName} !</b></h3>
+      <h3 style={{paddingLeft:22}}><b >Welcome,  {userName} !</b> </h3>
       <br/>
       <div className="row" style={{paddingLeft:22}}>
         <div className="col-4">
@@ -292,6 +305,7 @@ const UserHome = () => {
           filters={filters1}
           globalFilterFields={[
             "tokenId",
+            "contractEthereumAddress",
             "name",
             "description",
             "ethPrice"
@@ -305,22 +319,38 @@ const UserHome = () => {
           <Column
             field="tokenId"
             header="Token Id"
+            sortable
+          ></Column>
+          <Column
+            field="contractEthereumAddress"
+            header="Ethereum Address"
+            sortable
           ></Column>
           <Column
             field="name"
             header="Name"
+            sortable
           ></Column>
           <Column
             field="description"
             header="Description"
+            sortable
           ></Column>
           <Column
             field="ethPrice"
             header="Ethereum Price"
+            sortable
           ></Column>
             <Column
             field="currentUSDValue"
             header="USD Price"
+            sortable
+          ></Column>
+           <Column
+            field="openForTrade"
+            header="Open for Trade"
+            body={actionBodyTemplate}
+            sortable
           ></Column>
         </DataTable>
         </div>

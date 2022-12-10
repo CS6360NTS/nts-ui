@@ -26,6 +26,7 @@ function App() {
       <Header />
       <NavigationBar />
       <Routes>
+      <Route path="/" element={<About />} />
         <Route path="/about" element={<About />} />
         {/* <Route path="/contact" element={<ContactUs />} /> */}
         <Route path="/login" element={<Login />} />

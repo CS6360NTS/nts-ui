@@ -69,7 +69,7 @@ const TradeNFT = () => {
   const [selectedRows, setSelectedRows] = useState(null);
   const [tokenIds, setTokenIds] = useState([])
   const [cartValue, setCartValue] = useState(0);
-  const [ctype, setCType] = useState("");
+  const [ctype, setCType] = useState("eth");
   const [pageInputTooltip, setPageInputTooltip] = useState(
     "Press 'Enter' key to go to this page."
   );
@@ -369,6 +369,7 @@ const TradeNFT = () => {
         filters={filters1}
         globalFilterFields={[
           "tokenId",
+          "contractEthereumAddress",
           "clientId",
           "name",
           "description",
@@ -389,6 +390,11 @@ const TradeNFT = () => {
           header="Token Id"
           sortable="true"
         ></Column>
+        <Column
+            field="contractEthereumAddress"
+            header="Ethereum Address"
+            sortable
+          ></Column>
         <Column
           field="clientId"
           header="Client Id"

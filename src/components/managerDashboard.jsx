@@ -181,8 +181,8 @@ const ManagerDashboard = () => {
     axios
     .get("/nts/getManagerStatistics?startDate="+`${startDate.format("YYYY-MM-DD")}`+"&"+"endDate=" +`${endDate.format("YYYY-MM-DD")}`)
     .then((response) => {
-      setEthCommissionAmount(response.data.ethCommissionAmount);
-      setFaitCommissionAmount(response.data.faitCommissionAmount);
+      setEthCommissionAmount(response.data.ethCommissionAmount.toFixed(2));
+      setFaitCommissionAmount(response.data.faitCommissionAmount.toFixed(2));
       setMoneyTransactionCount(response.data.moneyTransactionCount);
       setTradeTransactionCancellCount(response.data.tradeTransactionCancellCount);
       setTradeTransactionCount(response.data.tradeTransactionCount);

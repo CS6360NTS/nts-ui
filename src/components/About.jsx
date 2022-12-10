@@ -16,9 +16,9 @@ function About() {
           <Carousel.Item interval={1000}>
             <img src={trend} style={{ display: 'block', width: 900, height: 600 }} alt="NFT 2"></img>
           </Carousel.Item>
-          <Carousel.Item interval={1000}>
+          {/* <Carousel.Item interval={1000}>
             <img src={nfta} style={{ display: 'block', with: 900, height: 600 }} alt="NFT 3"></img>
-          </Carousel.Item>
+          </Carousel.Item> */}
         </Carousel>
       </div>
     </div>
